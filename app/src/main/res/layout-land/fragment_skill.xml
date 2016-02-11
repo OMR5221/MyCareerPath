@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+
+    <!-- Display the skills the user has already entered -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:text="@string/skill_title_label"
+        style="?android:listSeparatorTextViewStyle"
+        android:layout_weight="1"/>
+
+    <!-- Allow user to add a new skill -->
+    <EditText
+        android:id="@+id/skill_title"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:hint="@string/skill_title_hint"
+        android:layout_weight="1"/>
+
+    <!-- Display a label with the words Detail to delimit fragment sections-->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:text="@string/skill_detail_label"
+        style="?android:listSeparatorTextViewStyle"
+        android:layout_weight="1"/>
+
+    <LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp">
+
+        <Button
+            android:id="@+id/skill_add_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <CheckBox
+            android:id="@+id/skill_experience"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/skill_exp_label"/>
+
+    </LinearLayout>
+
+</LinearLayout>

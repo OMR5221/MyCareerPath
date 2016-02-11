@@ -1,0 +1,16 @@
+Index: app/src/main/java/com/appsforprogress/android/mycareerpath/SkillListFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/appsforprogress/android/mycareerpath/SkillListFragment.java	(revision )
++++ app/src/main/java/com/appsforprogress/android/mycareerpath/SkillListFragment.java	(revision )
+@@ -114,6 +114,7 @@
+         // Check if we have added additional values to the savedInstanceState (Bundle)
+         if (savedInstanceState != null)
+         {
++            // Check if the Count Menu was visible or not before we paused then resumed this activity
+             mCountMenuVisible = savedInstanceState.getBoolean(SAVED_COUNT_MENU_VISIBLE);
+         }
+ 
+\ No newline at end of file
