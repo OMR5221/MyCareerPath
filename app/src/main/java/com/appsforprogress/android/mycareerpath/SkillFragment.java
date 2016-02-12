@@ -8,6 +8,9 @@ import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -69,6 +72,10 @@ public class SkillFragment extends Fragment
     {
         super.onCreate(savedInstanceState);
 
+        // Tells the FragmentManager that this Fragment has a menu
+        // so the onCreateOptionsMenu() needs to be run:
+        setHasOptionsMenu(true);
+
         // Instantiate the fragment with a Skill:
         // mSkill = new Skill();
 
@@ -81,6 +88,44 @@ public class SkillFragment extends Fragment
         // Get the skill from the SkillList Activity identified
         mSkill = SkillList.get(getActivity()).getSkill(skillId);
 
+
+    }
+
+    @Override
+    // Creates the Activities Menu:
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+    {
+        // Inflate the Menu resource layout
+        super.onCreateOptionsMenu(menu, inflater);
+
+        // Inflate the menu resource we created for this Fragment
+        inflater.inflate(R.menu.fragment_skill_scroller, menu);
+
+    }
+
+    @Override
+    // Respond to the user's menu selection
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        // Use a switch to differentiate Menu items:
+        switch (item.getItemId())
+        {
+            // In this case the Remove Skill Menu Option was selected:
+            // a. Delete the skill
+            case R.id.menu_item_rem_skill:
+
+                // Check if this Context(SkillListFragment) has a SkillList object defined
+                // If not create a SkillList
+                SkillList.get(getActivity()).removeSkill(mSkill);
+
+                // Pop back to the SkillListActivity
+                getActivity().finish();
+
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     // OnCreateView: Where we inflate the Fragments layout
@@ -176,7 +221,7 @@ public class SkillFragment extends Fragment
             return;
         }
 
-        // If the result matches the int for our adatepicker fragment communication
+        // If the result matches the int for our a datepicker fragment communication
         if (requestCode == REQUEST_DATE)
         {
             // Process the returned Intent data: Get Date to update the Skill with

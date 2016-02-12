@@ -81,7 +81,7 @@ public class SkillListFragment extends Fragment
                 // If not create a SkillList
                 SkillList.get(getActivity()).addSkill(newSkill);
 
-                // Define intent to start the SkillScrollerActivity and pass this skill's id reference
+                // Define intent to start the SkillScrollerActivity by passing this skill's id reference
                 Intent intent = SkillScrollerActivity.newIntent(getActivity(), newSkill.getId());
 
                 startActivity(intent); // Call the SkillScrollerActivities onCreate()

@@ -6,7 +6,8 @@
     <string name="skill_detail_label">Details</string>
     <string name="skill_exp_label">Experience?</string>
     <string name="date_picker_title">Date Skill Added:</string>
-    <string name="new_skill">New Skill</string>
+    <string name="new_skill">Add Skill</string>
+    <string name="rem_skill">Remove Skill</string>
     <string name="show_count">Show Count</string>
     <string name="hide_count">Hide Count</string>
     <string name="subtitle_format">%1s skills</string>

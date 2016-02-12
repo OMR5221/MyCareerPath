@@ -70,4 +70,6 @@ public class SkillList
     {
         mSkills.add(newSkill);
     }
+
+    public void removeSkill(Skill remSkill) { mSkills.remove(remSkill); }
 }
