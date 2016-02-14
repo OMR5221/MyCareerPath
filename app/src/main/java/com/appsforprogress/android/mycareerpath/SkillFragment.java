@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -45,12 +46,15 @@ public class SkillFragment extends Fragment
     private static final String ARG_SKILL_ID = "skill_id";
 
     // Key for DialogAlert to display Date
-    private static final String DIALOG_DATE = "DialogDate";
+    private static final String EXTRA_REM_INDEX = "com.appsforprogress.android.mycareerpath.rem_index";
 
     // Constant for the RequestCode to get data data back from DatePicker Fragment
     private static final int REQUEST_DATE = 0;
 
     private String formatStr = "EEEE, MMMM d, yyyy";
+
+    //
+    private static final String DIALOG_DATE = "DialogDate";
 
     // Return a SkillFragment Instance containing the skill input
     // to the calling Activity
@@ -111,12 +115,28 @@ public class SkillFragment extends Fragment
         switch (item.getItemId())
         {
             // In this case the Remove Skill Menu Option was selected:
-            // a. Delete the skill
+            // a. Delete the skill from the SkillList Object
+            // b. Send the index of the deleted skill back to the SkillListFragment
             case R.id.menu_item_rem_skill:
 
+                Log.d("REMOVAL", "About to remove an element from Skill Scroller.", new Exception());
                 // Check if this Context(SkillListFragment) has a SkillList object defined
                 // If not create a SkillList
+
+                Skill remSkill = mSkill;
+
                 SkillList.get(getActivity()).removeSkill(mSkill);
+
+                Log.d("REMOVED", "Removed an element from Skill Scroller.", new Exception());
+
+                // Define intent to communicate back to SkillListFragment the index of the item removed:
+                Intent remIndex = new Intent();
+
+                remIndex.putExtra(EXTRA_REM_INDEX, remSkill.getId());
+
+                // Call SkillScroller Activity's setResult method to send Intent data back to SkillListFragment
+                // since Fragments cannot send results
+                getActivity().setResult(getActivity().RESULT_OK, remIndex);
 
                 // Pop back to the SkillListActivity
                 getActivity().finish();
@@ -132,9 +152,9 @@ public class SkillFragment extends Fragment
     // to return its View to the hosting Activity
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        // Parm 1: Explicitly inflate the fragments view
-        // Parm 2: The Views parent
-        // Parm 3: tells layout inflater whether to add the inflated view to the view's parent
+        // Param 1: Explicitly inflate the fragments view
+        // Param 2: The Views parent
+        // Param 3: tells layout inflater whether to add the inflated view to the view's parent
         View v = inflater.inflate(R.layout.fragment_skill, container, false);
 
         // Set up the EditText widget from fragment_skill.xml
@@ -214,6 +234,7 @@ public class SkillFragment extends Fragment
         return v;
     }
 
+    // Used to get the date selected from DatePicker Dialog
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         if (resultCode != Activity.RESULT_OK)
@@ -233,7 +254,8 @@ public class SkillFragment extends Fragment
         }
     }
 
-    private void updateDate(String formatStr) {
+    private void updateDate(String formatStr)
+    {
         mAddedDateButton.setText(android.text.format.DateFormat.format(formatStr, mSkill.getAddedDate()));
     }
 }

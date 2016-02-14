@@ -22,9 +22,13 @@ public class SkillScrollerActivity extends AppCompatActivity
 {
     private ViewPager mViewPager;
     private List<Skill> mSkills;
-    // Add an Extra to hold the SkillList item selected for display in this SkillActivity
+    // Add an Extra to hold the SkillList item selected for display in the SkillScrollerActivity
     private static final String EXTRA_SKILL_ID = "com.appsforprogress.android.mycareerpath.skill_id";
 
+    // Add an Extra to hold the SkillScroller item index to be returned to the SkillList
+    private static final String EXTRA_SKILL_INDEX = "com.appsforprogress.android.mycareerpath.skill_index";
+
+    // Communicate with the SkillListActivity about the position of the Skill deleted
     public static Intent newIntent(Context packageContext, UUID skillId)
     {
         // Intent(HASH)
@@ -83,5 +87,11 @@ public class SkillScrollerActivity extends AppCompatActivity
                 break;
             }
         }
+    }
+
+    //
+    public static int getSkillIndex(Intent result)
+    {
+        return result.getIntExtra(EXTRA_SKILL_INDEX, 0);
     }
 }
