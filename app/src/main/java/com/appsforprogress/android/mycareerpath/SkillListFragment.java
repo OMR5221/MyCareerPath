@@ -53,9 +53,10 @@ public class SkillListFragment extends Fragment
     {
         // Inflate the Menu resource layout
         super.onCreateOptionsMenu(menu, inflater);
+
         inflater.inflate(R.menu.fragment_skill_list, menu);
 
-        // Get the countMenu reference:
+        /* Get the countMenu reference:
         MenuItem countItem = menu.findItem(R.id.menu_item_show_count);
 
         if (mCountMenuVisible) {
@@ -64,6 +65,7 @@ public class SkillListFragment extends Fragment
         else {
             countItem.setTitle(R.string.show_count);
         }
+        */
 
     }
 
@@ -95,13 +97,14 @@ public class SkillListFragment extends Fragment
 
                 return true;
 
-            // Menu item to show count of skills
+            /* Menu item to show count of skills
             case R.id.menu_item_show_count:
 
                 mCountMenuVisible = !mCountMenuVisible;
                 getActivity().invalidateOptionsMenu();
                 updateCount();
                 return true;
+            */
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -119,12 +122,13 @@ public class SkillListFragment extends Fragment
         // Create a LinearLayout object to manage positioning of items and scrolling in a list vertically:
         mSkillRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        // Check if we have added additional values to the savedInstanceState (Bundle)
+        /* Check if we have added additional values to the savedInstanceState (Bundle)
         if (savedInstanceState != null)
         {
             // Check if the Count Menu was visible or not before we paused then resumed this activity
             mCountMenuVisible = savedInstanceState.getBoolean(SAVED_COUNT_MENU_VISIBLE);
         }
+        */
 
         // Reload the list of skills and create an adapter
         updateUI();
@@ -139,10 +143,6 @@ public class SkillListFragment extends Fragment
 
         // Get current Count of skill list items:
         mCurrentCount = getSkillListCount();
-
-        // Get index of item returned from SkillFragment
-
-
 
         updateUI();
     }
@@ -167,7 +167,8 @@ public class SkillListFragment extends Fragment
         List<Skill> skills = skillList.getSkills();
 
         // Set up the adapter if it is not already in place:
-        if (mAdapter == null) {
+        if (mAdapter == null)
+        {
 
             // Create an adapter and pass the List of skills for it to manage
             mAdapter = new SkillAdapter(skills);
@@ -175,10 +176,11 @@ public class SkillListFragment extends Fragment
             // Connect the RecyclerView to the Adapter
             mSkillRecyclerView.setAdapter(mAdapter);
 
-        } else {
+        }
 
-            if (mPosition == null)
-            {
+        else {
+
+            if (mPosition == null) {
                 // Tells the adapter to reload all of the items that are visible
                 // in the RecyclerView
                 mAdapter.notifyDataSetChanged();
@@ -188,8 +190,7 @@ public class SkillListFragment extends Fragment
                 Log.d("Data Item Changed:", "About to reload Adapter holder item that was edited.", new Exception());
                 Log.d("Prior Count:", "About to reload Adapter holder item that was edited.", new Exception());
                 // We have deleted an item from the SkillList
-                if (mPriorCount > mCurrentCount)
-                {
+                if (mPriorCount > mCurrentCount) {
                     // Tell the adapter to expect that the holder's data was removed
                     mAdapter.notifyItemRemoved(mPosition);
 
@@ -198,8 +199,7 @@ public class SkillListFragment extends Fragment
                     mAdapter.notifyItemRangeChanged(mPosition, mItemCount);
                 }
                 // We have edited an item from the SkillList
-                else
-                {
+                else {
                     // Tell the adapter to reload only the item that was edited in the detail View
                     mAdapter.notifyItemChanged(mPosition);
                 }
@@ -209,6 +209,28 @@ public class SkillListFragment extends Fragment
         // Update the skill count one refresh of the SkillList UI
         updateCount();
 
+    }
+
+    // Code to show count when menu option selected:
+    private void updateCount()
+    {
+        // Get the int count of skills
+        int skillCount = getSkillListCount();
+
+        // Convert the int count to a string
+        String skillCountStr = getResources().getQuantityString(R.plurals.subtitle_format, skillCount, skillCount);
+
+        /* if the menu is not visible then set to null
+        if (!mCountMenuVisible)
+        {
+            totalCount = null;
+        }
+        */
+
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+
+        // Use the AppCompat activity to update the toolbar
+        activity.getSupportActionBar().setSubtitle(skillCountStr);
     }
 
     private int getSkillListCount()
@@ -221,25 +243,6 @@ public class SkillListFragment extends Fragment
         return skillCount;
     }
 
-    // Code to show count when menu option selected:
-    private void updateCount()
-    {
-        // Get the int count of skills
-        int skillCount = getSkillListCount();
-
-        // Convert the int count to a string
-        String totalCount = getString(R.string.subtitle_format, skillCount);
-
-        // if the menu is not visible then set to null
-        if (!mCountMenuVisible)
-        {
-            totalCount = null;
-        }
-
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        activity.getSupportActionBar().setSubtitle(totalCount);
-    }
-
 
     // Set up the RecyclerView's Adapter: controller that sits between
     // the RecyclerView and the data and manages there interaction.
@@ -247,9 +250,10 @@ public class SkillListFragment extends Fragment
     // 1. created a ViewHolder or
     // 2. bind a View to a ViewHolder
     // to a Skill Object
-    private class SkillAdapter extends RecyclerView.Adapter<SkillHolder>
+    private class SkillAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     {
         private List<Skill> mSkills;
+        private Integer mSkillCount;
 
         public SkillAdapter(List<Skill> skills)
         {
@@ -257,32 +261,59 @@ public class SkillListFragment extends Fragment
             mSkills = skills;
         }
 
-        @Override
-        // Create a ViewHolder for the RecyclerView which houses a simple TextView Object (simple_list_item_1)
-        public SkillHolder onCreateViewHolder(ViewGroup parent, int viewType)
-        {
 
+        @Override
+        // Called by the RecyclerView when it needs a new View to display an item
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
+        {
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
 
-            // Create a simple TextView using the android library:
-            // View view = layoutInflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+            int listViewItemType = getItemViewType(viewType);
 
-            // Create our custom Skill View item:
-            View view = layoutInflater.inflate(R.layout.list_item_skill, parent, false);
+            switch (listViewItemType)
+            {
+                case 0:
+                    // Create a simple TextView using the android library when no skills present:
+                    View noSkillView = layoutInflater.inflate(android.R.layout.simple_list_item_1, parent, false);
 
-            // Create a new SkillHolder to hold the TextView
-            return new SkillHolder(view);
+                    // Create a new SkillHolder to hold the TextView
+                    return new NoSkillHolder(noSkillView);
+
+                default:
+
+                    // Create our custom Skill View item:
+                    View skillView = layoutInflater.inflate(R.layout.list_item_skill, parent, false);
+
+                    // Create a new SkillHolder to hold the TextView
+                    return new SkillHolder(skillView);
+
+            }
+
         }
 
         @Override
         //  Bind a skill to a holder
-        public void onBindViewHolder(SkillHolder holder, int index)
-        {
-            // Get a skill from the skills List (Model Data)
-            Skill skill = mSkills.get(index);
+        public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int index) {
+            switch (viewHolder.getItemViewType())
+            {
+                case 0:
 
-            // Place the text in the TextView held by the holder to the skill object's Title
-            holder.bindSkill(skill);
+                    NoSkillHolder noSkillHolder = (NoSkillHolder) viewHolder;
+
+                    // Place the text in the TextView held by the holder to the skill object's Title
+                    noSkillHolder.mNoSkillTextView.setText(R.string.no_skills);
+
+                default:
+
+                    // Get a skill from the skills List (Model Data)
+                    Skill skill = mSkills.get(index);
+
+                    SkillHolder skillHolder = (SkillHolder) viewHolder;
+
+                    // Place the text in the TextView held by the holder to the skill object's Title
+                    skillHolder.bindSkill(skill);
+
+            }
         }
 
         @Override
@@ -296,6 +327,28 @@ public class SkillListFragment extends Fragment
         public long getItemId(int position)
         {
             return super.getItemId(position);
+        }
+
+        @Override
+        public int getItemViewType(int position)
+        {
+            // return super.getItemViewType(position);
+            return this.getItemCount();
+
+        }
+    }
+
+    // Add a SkillHolder when no Skills are present:
+    private class NoSkillHolder extends RecyclerView.ViewHolder
+    {
+        public TextView mNoSkillTextView;
+
+        public NoSkillHolder(View itemView)
+        {
+            super(itemView);
+
+            // Create a TextView to display message
+            mNoSkillTextView = (TextView) itemView;
         }
     }
 

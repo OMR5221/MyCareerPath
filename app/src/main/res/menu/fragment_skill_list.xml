@@ -9,10 +9,11 @@
         android:icon="@drawable/ic_menu_add"
         app:showAsAction="ifRoom|withText"/>
 
-    <!-- Menu item to show the count of skills -->
+    <!-- Menu item to show the count of skills
     <item
         android:id="@+id/menu_item_show_count"
         android:title="@string/show_count"
         app:showAsAction="ifRoom"/>
+    -->
 
 </menu>
