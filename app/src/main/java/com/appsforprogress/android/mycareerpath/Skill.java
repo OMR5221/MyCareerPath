@@ -14,7 +14,8 @@ public class Skill
     private Date mAddedDate;
     private boolean mExperienced;
 
-    public Integer getIndex() {
+    public Integer getIndex()
+    {
         return mIndex;
     }
 
@@ -27,8 +28,17 @@ public class Skill
     // Define constructor for the Skill Model
     public Skill()
     {
-        // Generate a unique identifier
+        /* OLD: Generate a unique identifier
         mId = UUID.randomUUID();
+        mAddedDate = new Date(); */
+
+        // Call the secondary constructor below with a random UUID:
+        this(UUID.randomUUID());
+    }
+
+    public Skill(UUID id)
+    {
+        mId = id;
         mAddedDate = new Date();
     }
 

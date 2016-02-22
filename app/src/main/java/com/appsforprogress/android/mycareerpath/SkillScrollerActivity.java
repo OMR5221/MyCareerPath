@@ -89,7 +89,7 @@ public class SkillScrollerActivity extends AppCompatActivity
         }
     }
 
-    //
+    // Function called by the SkillListFragment to get the Index
     public static int getSkillIndex(Intent result)
     {
         return result.getIntExtra(EXTRA_SKILL_INDEX, 0);

@@ -119,26 +119,30 @@ public class SkillFragment extends Fragment
             // b. Send the index of the deleted skill back to the SkillListFragment
             case R.id.menu_item_rem_skill:
 
-                Log.d("REMOVAL", "About to remove an element from Skill Scroller.", new Exception());
+                //Log.d("REMOVAL", "About to remove an element from Skill Scroller.", new Exception());
+
                 // Check if this Context(SkillListFragment) has a SkillList object defined
                 // If not create a SkillList
 
                 Skill remSkill = mSkill;
 
+                // Remove the skill using the SkillList Array remove method:
                 SkillList.get(getActivity()).removeSkill(mSkill);
 
-                Log.d("REMOVED", "Removed an element from Skill Scroller.", new Exception());
+                // Log.d("REMOVED", "Removed an element from Skill Scroller.", new Exception());
 
                 // Define intent to communicate back to SkillListFragment the index of the item removed:
                 Intent remIndex = new Intent();
 
+                // Put he index of the item to be deleted in the EXTRA of the Intent
                 remIndex.putExtra(EXTRA_REM_INDEX, remSkill.getId());
 
                 // Call SkillScroller Activity's setResult method to send Intent data back to SkillListFragment
                 // since Fragments cannot send results
+                //
                 getActivity().setResult(getActivity().RESULT_OK, remIndex);
 
-                // Pop back to the SkillListActivity
+                // Pop back to the SkillListActivity to return a result
                 getActivity().finish();
 
                 return true;
@@ -232,6 +236,16 @@ public class SkillFragment extends Fragment
 
         // Return the Fragment view
         return v;
+    }
+
+    @Override
+    // Send the Skill Details back to the SkillList Database
+    public void onPause()
+    {
+        super.onPause();
+
+        // Always edits the details of the skill paused on
+        SkillList.get(getActivity()).updateSkill(mSkill);
     }
 
     // Used to get the date selected from DatePicker Dialog

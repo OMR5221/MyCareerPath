@@ -26,6 +26,7 @@ import java.util.List;
 public class SkillListFragment extends Fragment
 {
     private RecyclerView mSkillRecyclerView;
+    private TextView mNoSkillTextView;
     private SkillAdapter mAdapter;
     private Integer mPosition;
     private Integer mViewId;
@@ -34,6 +35,7 @@ public class SkillListFragment extends Fragment
     private static final Integer REQUEST_SKILL_INDEX = 1;
     private Integer mPriorCount;
     private Integer mCurrentCount;
+    private Integer mSkillCount;
 
     @Override
     //
@@ -84,8 +86,7 @@ public class SkillListFragment extends Fragment
 
                 Skill newSkill = new Skill();
 
-                // Check if this Context(SkillListFragment) has a SkillList object defined
-                // If not create a SkillList
+                // Add a new Skill to the SkillList object
                 SkillList.get(getActivity()).addSkill(newSkill);
 
                 // Define intent to start the SkillScrollerActivity by passing this skill's id reference
@@ -113,11 +114,14 @@ public class SkillListFragment extends Fragment
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
+
         // Initialize view from the fragment_skill_list layout file
         View view = inflater.inflate(R.layout.fragment_skill_list, container, false);
 
         // Reference to the Views Recycler widget:
         mSkillRecyclerView = (RecyclerView) view.findViewById(R.id.skill_recycler_view);
+
+        mNoSkillTextView = (TextView) view.findViewById(R.id.no_skills_text_view);
 
         // Create a LinearLayout object to manage positioning of items and scrolling in a list vertically:
         mSkillRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -166,45 +170,70 @@ public class SkillListFragment extends Fragment
         // Create a new list of skills and copy the elements of our SkillList object
         List<Skill> skills = skillList.getSkills();
 
-        // Set up the adapter if it is not already in place:
-        if (mAdapter == null)
+        mSkillCount = skills.size();
+
+        if (mSkillCount == 0)
+        {
+            mSkillRecyclerView.setVisibility(View.GONE);
+            mNoSkillTextView.setVisibility(View.VISIBLE);
+        }
+        else
         {
 
-            // Create an adapter and pass the List of skills for it to manage
-            mAdapter = new SkillAdapter(skills);
+            // Set up the adapter if it is not already in place:
+            if (mAdapter == null)
+            {
 
-            // Connect the RecyclerView to the Adapter
-            mSkillRecyclerView.setAdapter(mAdapter);
+                // Create an adapter and pass the List of skills for it to manage
+                mAdapter = new SkillAdapter(skills);
 
-        }
+                // Connect the RecyclerView to the Adapter
+                mSkillRecyclerView.setAdapter(mAdapter);
 
-        else {
 
-            if (mPosition == null) {
-                // Tells the adapter to reload all of the items that are visible
-                // in the RecyclerView
-                mAdapter.notifyDataSetChanged();
+            }
+            else
+            {
 
-            } else {
+                // Give the Adapter the latest skills List
+                mAdapter.setSkills(skills);
 
-                Log.d("Data Item Changed:", "About to reload Adapter holder item that was edited.", new Exception());
-                Log.d("Prior Count:", "About to reload Adapter holder item that was edited.", new Exception());
-                // We have deleted an item from the SkillList
-                if (mPriorCount > mCurrentCount) {
-                    // Tell the adapter to expect that the holder's data was removed
-                    mAdapter.notifyItemRemoved(mPosition);
+                // mostly likely relaoding everything on a onPause?
+                if (mPosition == null)
+                {
+                    // Tells the adapter to reload all of the items that are visible
+                    // in the RecyclerView
+                    mAdapter.notifyDataSetChanged();
 
-                    Integer mItemCount = mCurrentCount - mPosition;
-
-                    mAdapter.notifyItemRangeChanged(mPosition, mItemCount);
                 }
-                // We have edited an item from the SkillList
-                else {
-                    // Tell the adapter to reload only the item that was edited in the detail View
-                    mAdapter.notifyItemChanged(mPosition);
+                else
+                {
+
+                    // Log.d("Data Item Changed:", "About to reload Adapter holder item that was edited.", new Exception());
+                    // Log.d("Prior Count:", "About to reload Adapter holder item that was edited.", new Exception());
+                    // We have deleted a single item from the SkillList
+                    if (mPriorCount > mCurrentCount)
+                    {
+                        // Tell the adapter to expect that the holder's data was removed
+                        mAdapter.notifyItemRemoved(mPosition);
+
+                        Integer mItemCount = mCurrentCount - mPosition;
+
+                        mAdapter.notifyItemRangeChanged(mPosition, mItemCount);
+                    }
+                    // We have edited an item from the SkillList
+                    else
+                    {
+                        // Tell the adapter to reload only the item that was edited in the detail View
+                        mAdapter.notifyItemChanged(mPosition);
+                    }
                 }
             }
+
+            mSkillRecyclerView.setVisibility(View.VISIBLE);
+            mNoSkillTextView.setVisibility(View.GONE);
         }
+
 
         // Update the skill count one refresh of the SkillList UI
         updateCount();
@@ -253,12 +282,13 @@ public class SkillListFragment extends Fragment
     private class SkillAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     {
         private List<Skill> mSkills;
-        private Integer mSkillCount;
 
         public SkillAdapter(List<Skill> skills)
         {
             // Initialize adapter to manage a list of skills
             mSkills = skills;
+
+            getItemViewType(getItemCount());
         }
 
 
@@ -286,9 +316,7 @@ public class SkillListFragment extends Fragment
 
                     // Create a new SkillHolder to hold the TextView
                     return new SkillHolder(skillView);
-
             }
-
         }
 
         @Override
@@ -336,6 +364,12 @@ public class SkillListFragment extends Fragment
             return this.getItemCount();
 
         }
+
+        // Update the Adapters listing of skills
+        public void setSkills(List<Skill> skills)
+        {
+            mSkills = skills;
+        }
     }
 
     // Add a SkillHolder when no Skills are present:
@@ -348,7 +382,7 @@ public class SkillListFragment extends Fragment
             super(itemView);
 
             // Create a TextView to display message
-            mNoSkillTextView = (TextView) itemView;
+            mNoSkillTextView = (TextView) itemView.findViewById(R.id.no_skills_text_view);
         }
     }
 
@@ -400,6 +434,7 @@ public class SkillListFragment extends Fragment
             //mPosition = this.getAdapterPosition();
 
             // Start the activity to update the Skill displayed in the SkillFragment
+            // expecting the return of the result of the index of the last Skill displayed:
             startActivityForResult(intent, REQUEST_SKILL_INDEX);
         }
     }
@@ -416,7 +451,7 @@ public class SkillListFragment extends Fragment
         }
 
         // Retrieve the result Intent with the index of the skill last displayed by the user
-        // before they return to the SkillList
+        // before they returned to the SkillList
         if (requestCode == REQUEST_SKILL_INDEX)
         {
             if (data == null)
@@ -424,7 +459,8 @@ public class SkillListFragment extends Fragment
                 return;
             }
 
-            // Get the index value from the Intent sent to this Fragment
+            // Get the index value from the Intent sent to this Fragment by getting the INDEX
+            // value sent in the extra from the SkillScrollerActivity/SkillFragment
             mPosition = SkillScrollerActivity.getSkillIndex(data);
         }
     }
