@@ -28,6 +28,7 @@ public class SkillCursorWrapper extends CursorWrapper
         super(cursor);
     }
 
+    // READ values from columns in our DB:
     public Skill getSkill()
     {
         // Retrieve Database record and cast to Java data types
@@ -35,12 +36,14 @@ public class SkillCursorWrapper extends CursorWrapper
         String title = getString(getColumnIndex(SkillTable.Cols.TITLE));
         long date = getLong(getColumnIndex(SkillTable.Cols.DATE));
         int hasExperience = getInt(getColumnIndex(SkillTable.Cols.EXPERIENCE));
+        String peerName = getString(getColumnIndex(SkillTable.Cols.PEER_NAME));
 
-        // Create a new Skill and assign values retrieved to the new Skill
+        // Create a new Skill and assign values retrieved from the Database for display in SkillFragment
         Skill skill = new Skill(UUID.fromString(uuidString));
         skill.setTitle(title);
         skill.setAddedDate(new Date(date));
         skill.setExperienced(hasExperience != 0);
+        skill.setPeer(peerName);
 
         return skill;
     }

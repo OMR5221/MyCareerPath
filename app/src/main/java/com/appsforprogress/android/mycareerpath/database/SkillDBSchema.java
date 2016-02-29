@@ -16,6 +16,7 @@ public class SkillDBSchema
             public static final String TITLE = "title";
             public static final String DATE = "date";
             public static final String EXPERIENCE = "experience";
+            public static final String PEER_NAME = "peer_name";
         }
     }
 }

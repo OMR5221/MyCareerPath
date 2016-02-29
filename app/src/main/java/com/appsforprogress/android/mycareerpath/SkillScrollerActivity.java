@@ -54,27 +54,34 @@ public class SkillScrollerActivity extends AppCompatActivity
         // Get a reference to the ViewPager widget
         mViewPager = (ViewPager) findViewById(R.id.activity_skill_scroller_view_pager);
 
+        // Get skills data:
         mSkills = SkillList.get(this).getSkills();
 
         // Get the fragmentManager for this Activity:
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         // Have the viewPager Adapter manage the Fragment for this Activity
-        mViewPager.setAdapter(new FragmentStatePagerAdapter(fragmentManager)
-        {
-            @Override
-            public Fragment getItem(int position)
+        mViewPager.setAdapter
+        (
+            new FragmentStatePagerAdapter(fragmentManager)
             {
-                Skill skill = mSkills.get(position);
-                return SkillFragment.newInstance(skill.getId());
-            }
+                @Override
+                public Fragment getItem(int position)
+                {
+                    // Get a skill from the skillList
+                    Skill skill = mSkills.get(position);
 
-            @Override
-            public int getCount()
-            {
-                return mSkills.size();
+                    // Send this skill to be retrieved in the SkillFragment
+                    return SkillFragment.newInstance(skill.getId());
+                }
+
+                @Override
+                public int getCount()
+                {
+                    return mSkills.size();
+                }
             }
-        });
+        );
 
         // Loop through all skills
         // and check if one matches the passed in skillId

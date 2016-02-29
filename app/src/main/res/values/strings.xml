@@ -13,4 +13,14 @@
         <item quantity="one">%1$s skill</item>
         <item quantity="other">%1$s skills</item>
     </plurals>
+    <string name="skill_peer_button_text">Choose Peer</string>
+    <string name="skill_resume_button_text">Send Skill Resume</string>
+    <string name="skill_resume">%1$s!\nAs of %2$s: %4$s, and %3$s
+    </string>
+    <string name="skill_endorsed">this skill has been endorsed!</string>
+    <string name="skill_not_endorsed">this skill has not been endorsed.</string>
+    <string name="skill_no_peer">No peer associated</string>
+    <string name="skill_peer">Your peer is %s</string>
+    <string name="skill_resume_subject">MyCareerPath Generated Skill Resume</string>
+    <string name="send_report">Send skill resume via</string>
 </resources>

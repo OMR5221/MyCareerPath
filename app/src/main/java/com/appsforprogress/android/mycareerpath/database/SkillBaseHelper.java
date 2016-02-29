@@ -31,7 +31,8 @@ public class SkillBaseHelper extends SQLiteOpenHelper
                 SkillTable.Cols.UUID + ", " +
                 SkillTable.Cols.TITLE + ", " +
                 SkillTable.Cols.DATE + ", " +
-                SkillTable.Cols.EXPERIENCE + ")"
+                SkillTable.Cols.EXPERIENCE + ", " +
+                SkillTable.Cols.PEER_NAME + ")"
         );
     }
 

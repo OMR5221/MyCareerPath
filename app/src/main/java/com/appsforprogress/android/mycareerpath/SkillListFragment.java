@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -198,7 +199,7 @@ public class SkillListFragment extends Fragment
                 // Give the Adapter the latest skills List
                 mAdapter.setSkills(skills);
 
-                // mostly likely relaoding everything on a onPause?
+                // mostly likely reloading everything on an onPause?
                 if (mPosition == null)
                 {
                     // Tells the adapter to reload all of the items that are visible
@@ -404,6 +405,22 @@ public class SkillListFragment extends Fragment
             mTitleTextView = (TextView) itemView.findViewById(R.id.list_item_skill_title_text_view);
             mDateAddedTextView = (TextView) itemView.findViewById(R.id.list_item_skill_date_text_view);
             mExperienceCheckBox = (CheckBox) itemView.findViewById(R.id.list_item_skill_exp_check_box);
+
+            // Disable checkbox grays it out: mExperienceCheckBox.setEnabled(false);
+
+            /* Set up the checkbox to listen to user selection:
+            mExperienceCheckBox.setOnCheckedChangeListener
+            (
+                new CompoundButton.OnCheckedChangeListener()
+                {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+                    {
+                        mSkill.setExperienced(isChecked);
+                    }
+                }
+            );
+            */
         }
 
         // Get a skill and bind its fields to the RecyclerView.Holder

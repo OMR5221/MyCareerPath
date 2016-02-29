@@ -2,9 +2,14 @@ package com.appsforprogress.android.mycareerpath;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.ShareCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -18,10 +23,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-
-import java.text.DateFormat;
+import android.text.format.DateFormat;
 import java.util.Date;
 import java.util.UUID;
+
+import static android.support.v4.app.ShareCompat.*;
 
 /**
  * Created by Oswald on 1/4/2016.
@@ -48,13 +54,19 @@ public class SkillFragment extends Fragment
     // Key for DialogAlert to display Date
     private static final String EXTRA_REM_INDEX = "com.appsforprogress.android.mycareerpath.rem_index";
 
-    // Constant for the RequestCode to get data data back from DatePicker Fragment
+    // Constant for the RequestCode to get data back from DatePicker Fragment:
     private static final int REQUEST_DATE = 0;
+    // Constant for the requestCode to identify the Intent to allow the user to pick a contact:
+    private static final int REQUEST_CONTACT = 1;
 
-    private String formatStr = "EEEE, MMMM d, yyyy";
+    private String longDateFormat = "EEEE, MMMM d, yyyy";
+    private String shortDateFormat = "EEE, MMM dd";
 
-    //
     private static final String DIALOG_DATE = "DialogDate";
+
+    // Button to send Skills Resume:
+    private Button mSendResumeButton;
+    private Button mPickPeerButton;
 
     // Return a SkillFragment Instance containing the skill input
     // to the calling Activity
@@ -184,7 +196,7 @@ public class SkillFragment extends Fragment
             public void afterTextChanged(Editable s) {}
         });
 
-        DateFormat dateFormat = android.text.format.DateFormat.getMediumDateFormat(getContext());
+        // DateFormat dateFormat = android.text.format.DateFormat.getMediumDateFormat(getContext());
 
         // Set up the Date Button
         mAddedDateButton = (Button) v.findViewById(R.id.skill_add_date);
@@ -192,7 +204,7 @@ public class SkillFragment extends Fragment
         // Set the text to Skill instance AddedDate field
         // mAddedDateButton.setText(dateFormat.format(mSkill.getAddedDate()));
         // mAddedDateButton.setText(android.text.format.DateFormat.format(formatStr, mSkill.getAddedDate()));
-        updateDate(formatStr);
+        updateDate();
 
         // Disable the button from being altered for now:
         // mAddedDateButton.setEnabled(false);
@@ -200,8 +212,7 @@ public class SkillFragment extends Fragment
         // Enable the onClickListener for the dateButton to create our DatePickerFragment
         mAddedDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 // Get the Fragment Manager to handle the alertDialog in our DatePickerFragment
                 //FragmentManager manager = getFragmentManager();
                 FragmentManager manager = getActivity()
@@ -225,12 +236,97 @@ public class SkillFragment extends Fragment
         mExperienceCheckBox.setChecked(mSkill.isExperienced());
 
         // Set up the listener:
-        mExperienceCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-        {
+        mExperienceCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
+                mSkill.setExperienced(isChecked);
+            }
+        });
 
+        // Set up button to allow user to pick a peer from contacts list
+        mPickPeerButton = (Button) v.findViewById(R.id.skill_peer);
+
+        // Intent to request access to Contacts to allow for the action of the user to pick
+        final Intent pickContact = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+
+        // Dummy code to filter our Contacts app so that our Contacts app is not found:
+        // pickContact.addCategory(Intent.CATEGORY_HOME);
+
+        // Allow us to check OS to see if the user's phone has a Contacts App:
+        PackageManager packageManager = getActivity().getPackageManager();
+
+        // PackageManager: knows about all components installed on the user's Android device:
+        // resolveActivity: ask packageManager to find an Activity that matches the Intent given to it.
+        // If null then no corresponding app capable of handling the Intent was found
+        if (packageManager.resolveActivity(pickContact, PackageManager.MATCH_DEFAULT_ONLY) == null)
+        {
+            // If no contacts app found then disable the PickPeerButton
+            mPickPeerButton.setEnabled(false);
+        }
+        else
+        {
+            mPickPeerButton.setEnabled(true);
+
+            mPickPeerButton.setOnClickListener(new View.OnClickListener()
+            {
+
+                @Override
+                // Click launches Implicit Intent to contacts list
+                public void onClick(View v) {
+                    startActivityForResult(pickContact, REQUEST_CONTACT);
+                }
+            });
+        }
+
+        String peerName = mSkill.getPeer();
+
+        // Set the Peer Pick Button to show the Peer Name if not null
+        if (peerName != null)
+        {
+            mPickPeerButton.setText(peerName);
+        }
+
+        // Set up Button to send the Skills Resume:
+        mSendResumeButton = (Button) v.findViewById(R.id.skill_resume);
+        mSendResumeButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                // Defining our own Intent:
+                /* Define the action of this intent: sending data
+                Intent outText = new Intent(Intent.ACTION_SEND);
+
+                // Let intent know the type of data the action is for:
+                outText.setType("text/plain");
+
+                // Attach our generated resume as an Extra
+                outText.putExtra(Intent.EXTRA_TEXT, genSkillResume());
+
+                // Attach our subject string as an Extra
+                outText.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.skill_resume_subject));
+
+                // Demands app show the chooser app dialog:
+                outText = Intent.createChooser(outText, getString(R.string.send_report));
+                */
+
+                // Creating an Intent using ShareCompat.IntentBuilder:
+                IntentBuilder ib = IntentBuilder.from(getActivity());
+
+                ib.setType("text/plain");
+
+                ib.setText(genSkillResume());
+
+                ib.setSubject(getString(R.string.skill_resume_subject));
+
+                ib.createChooserIntent();
+
+                // Create an Implicit Intent to OS for another app to handle a request: Create a plan text file with skill resume
+                Intent outText = ib.getIntent();
+
+                // Send to OS to find apps to handle
+                startActivity(outText);
             }
         });
 
@@ -248,7 +344,7 @@ public class SkillFragment extends Fragment
         SkillList.get(getActivity()).updateSkill(mSkill);
     }
 
-    // Used to get the date selected from DatePicker Dialog
+    // Used to process results from called Child Activities:
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         if (resultCode != Activity.RESULT_OK)
@@ -264,12 +360,91 @@ public class SkillFragment extends Fragment
 
             mSkill.setAddedDate(date);
 
-            updateDate(formatStr);
+            updateDate();
+        }
+        // Handle the results for the return of the users Contact pick
+        else if (requestCode == REQUEST_CONTACT && data != null)
+        {
+            // URI: Locator that points at the single contact the user picked.
+            Uri contactUri = data.getData();
+
+            // Specify the fields from the Contacts DB we want our query to return values for:
+            String[] queryFields = new String[]
+            {
+                ContactsContract.Contacts.DISPLAY_NAME
+            };
+
+            // Perform our query: the contactURI is like a "where"
+            Cursor c = getActivity().getContentResolver().query(contactUri, queryFields, null, null, null);
+
+            // Allows us to navigate through data retrieved.
+            try
+            {
+                // Double check that our query got results:
+                if (c.getCount() == 0)
+                {
+                    return;
+                }
+
+                // Retrieve the first column of the first row of data - peer's name
+                // and update the Skill and the Button with the contact's name
+                c.moveToFirst();
+                String peerName = c.getString(0);
+                mSkill.setPeer(peerName);
+                mPickPeerButton.setText(peerName);
+            }
+            finally
+            {
+                c.close();
+            }
         }
     }
 
-    private void updateDate(String formatStr)
+
+    private void updateDate()
     {
-        mAddedDateButton.setText(android.text.format.DateFormat.format(formatStr, mSkill.getAddedDate()));
+        mAddedDateButton.setText(getFormattedDate(longDateFormat));
     }
+
+    private CharSequence getFormattedDate(String dateFormat)
+    {
+        return DateFormat.format(dateFormat, mSkill.getAddedDate());
+    }
+
+    // Generate the users skill resume => Should encompass all skills
+    private String genSkillResume()
+    {
+        String peer = mSkill.getPeer();
+        String endorsed = null;
+
+        if (peer == null)
+        {
+            peer = getString(R.string.skill_no_peer);
+
+            endorsed = getString(R.string.skill_not_endorsed);
+        }
+        else
+        {
+            peer = getString(R.string.skill_peer);
+
+            // Check if this peer endorsed the skill:
+            if (mSkill.isExperienced())
+            {
+                endorsed = getString(R.string.skill_endorsed);
+            }
+            else
+            {
+                endorsed = getString(R.string.skill_not_endorsed);
+            }
+        }
+
+        String date = getFormattedDate(shortDateFormat).toString();
+
+        String resume = getString(R.string.skill_resume, mSkill.getTitle(), date, endorsed, peer);
+
+        return resume;
+
+    }
+
+
 }

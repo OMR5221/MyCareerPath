@@ -1,5 +1,6 @@
 package com.appsforprogress.android.mycareerpath;
 
+import java.security.PublicKey;
 import java.util.Date;
 import java.util.UUID;
 
@@ -13,6 +14,8 @@ public class Skill
     private String mTitle;
     private Date mAddedDate;
     private boolean mExperienced;
+    // String for name of peer providing endorsement:
+    private String mPeer;
 
     public Integer getIndex()
     {
@@ -74,5 +77,15 @@ public class Skill
 
     public void setExperienced(boolean experienced) {
         mExperienced = experienced;
+    }
+
+    public void setPeer(String peerName)
+    {
+        mPeer = peerName;
+    }
+
+    public String getPeer()
+    {
+        return mPeer;
     }
 }

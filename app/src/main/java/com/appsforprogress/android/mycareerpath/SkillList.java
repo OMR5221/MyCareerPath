@@ -152,7 +152,7 @@ public class SkillList
 
     }
 
-    // Set up hash for our database records:
+    // WRITE to the columns in our DB:
     private static ContentValues getContentValues(Skill skill)
     {
         ContentValues values = new ContentValues();
@@ -161,6 +161,7 @@ public class SkillList
         values.put(SkillTable.Cols.TITLE, skill.getTitle());
         values.put(SkillTable.Cols.DATE, skill.getAddedDate().getTime());
         values.put(SkillTable.Cols.EXPERIENCE, skill.isExperienced() ? 1 : 0);
+        values.put(SkillTable.Cols.PEER_NAME, skill.getPeer());
 
         return values;
     }

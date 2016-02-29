@@ -2,8 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-    >
+              android:layout_height="wrap_content">
 
     <!-- Display the skills the user has already entered -->
     <TextView
@@ -47,5 +46,21 @@
         android:layout_marginRight="16dp"
         android:text="@string/skill_exp_label"
         android:layout_weight="1"/>
+
+    <Button
+        android:id="@+id/skill_peer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:text="@string/skill_peer_button_text"/>
+
+    <Button
+        android:id="@+id/skill_resume"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:text="@string/skill_resume_button_text"/>
 
 </LinearLayout>
