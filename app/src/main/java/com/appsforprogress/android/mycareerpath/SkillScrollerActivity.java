@@ -97,8 +97,11 @@ public class SkillScrollerActivity extends AppCompatActivity
     }
 
     // Function called by the SkillListFragment to get the Index
-    public static int getSkillIndex(Intent result)
+    public static UUID getSkillIndex(Intent result)
     {
-        return result.getIntExtra(EXTRA_SKILL_INDEX, 0);
+        // The skill passed in through the Intent:
+        UUID skillId = (UUID) result.getSerializableExtra(EXTRA_SKILL_INDEX);
+
+        return skillId;
     }
 }

@@ -16,16 +16,6 @@ public class Skill
     private boolean mExperienced;
     // String for name of peer providing endorsement:
     private String mPeer;
-
-    public Integer getIndex()
-    {
-        return mIndex;
-    }
-
-    public void setIndex(Integer index) {
-        mIndex = index;
-    }
-
     private Integer mIndex;
 
     // Define constructor for the Skill Model

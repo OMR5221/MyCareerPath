@@ -25,6 +25,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.text.format.DateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import static android.support.v4.app.ShareCompat.*;
@@ -54,6 +55,9 @@ public class SkillFragment extends Fragment
     // Key for DialogAlert to display Date
     private static final String EXTRA_REM_INDEX = "com.appsforprogress.android.mycareerpath.rem_index";
 
+    // Key for the result returned to skillList for the last Skill viewed before pause of skillscroller
+    private static final String EXTRA_LAST_SKILL_INDEX = "com.appsforprogress.android.mycareerpath.last_skill_index";
+
     // Constant for the RequestCode to get data back from DatePicker Fragment:
     private static final int REQUEST_DATE = 0;
     // Constant for the requestCode to identify the Intent to allow the user to pick a contact:
@@ -67,6 +71,9 @@ public class SkillFragment extends Fragment
     // Button to send Skills Resume:
     private Button mSendResumeButton;
     private Button mPickPeerButton;
+
+    // Array to hold list of all items edited by user
+    private List<UUID> mEditedItems;
 
     // Return a SkillFragment Instance containing the skill input
     // to the calling Activity
@@ -151,7 +158,6 @@ public class SkillFragment extends Fragment
 
                 // Call SkillScroller Activity's setResult method to send Intent data back to SkillListFragment
                 // since Fragments cannot send results
-                //
                 getActivity().setResult(getActivity().RESULT_OK, remIndex);
 
                 // Pop back to the SkillListActivity to return a result
@@ -210,13 +216,13 @@ public class SkillFragment extends Fragment
         // mAddedDateButton.setEnabled(false);
 
         // Enable the onClickListener for the dateButton to create our DatePickerFragment
-        mAddedDateButton.setOnClickListener(new View.OnClickListener() {
+        mAddedDateButton.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v) {
                 // Get the Fragment Manager to handle the alertDialog in our DatePickerFragment
                 //FragmentManager manager = getFragmentManager();
-                FragmentManager manager = getActivity()
-                        .getSupportFragmentManager();
+                FragmentManager manager = getActivity().getSupportFragmentManager();
 
                 // Call the DatePicker Fragments newInstance method by passing in the skill's added date
                 DatePickerFragment dialog = DatePickerFragment.newInstance(mSkill.getAddedDate());
@@ -236,7 +242,8 @@ public class SkillFragment extends Fragment
         mExperienceCheckBox.setChecked(mSkill.isExperienced());
 
         // Set up the listener:
-        mExperienceCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        mExperienceCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
@@ -342,6 +349,30 @@ public class SkillFragment extends Fragment
 
         // Always edits the details of the skill paused on
         SkillList.get(getActivity()).updateSkill(mSkill);
+
+        // Send back Skill Index as an Intent Extra:
+        // returnSkillIndexResult();
+    }
+
+    // Create Intent with Extra for the last Skill viewed before return:
+    private void returnSkillIndexResult()
+    {
+        Skill lastSkill = mSkill;
+
+        // Log.d("REMOVED", "Removed an element from Skill Scroller.", new Exception());
+
+        // Define intent to communicate back to SkillListFragment the index of the item removed:
+        Intent lastSkillIntent = new Intent();
+
+        // Put the index of the item to be deleted in the EXTRA of the Intent
+        lastSkillIntent.putExtra(EXTRA_LAST_SKILL_INDEX, lastSkill.getId());
+
+        // Call SkillScroller Activity's setResult method to send Intent data back to SkillListFragment
+        // since Fragments cannot send results
+        getActivity().setResult(getActivity().RESULT_OK, lastSkillIntent);
+
+        // Pop back to the SkillListActivity to return a result
+        // getActivity().finish();
     }
 
     // Used to process results from called Child Activities:
@@ -415,17 +446,18 @@ public class SkillFragment extends Fragment
     private String genSkillResume()
     {
         String peer = mSkill.getPeer();
+        String peerStr = null;
         String endorsed = null;
 
         if (peer == null)
         {
-            peer = getString(R.string.skill_no_peer);
+            peerStr = getString(R.string.skill_no_peer);
 
             endorsed = getString(R.string.skill_not_endorsed);
         }
         else
         {
-            peer = getString(R.string.skill_peer);
+            peerStr = getString(R.string.skill_peer, peer);
 
             // Check if this peer endorsed the skill:
             if (mSkill.isExperienced())
@@ -440,7 +472,7 @@ public class SkillFragment extends Fragment
 
         String date = getFormattedDate(shortDateFormat).toString();
 
-        String resume = getString(R.string.skill_resume, mSkill.getTitle(), date, endorsed, peer);
+        String resume = getString(R.string.skill_resume, mSkill.getTitle(), date, endorsed, peerStr);
 
         return resume;
 

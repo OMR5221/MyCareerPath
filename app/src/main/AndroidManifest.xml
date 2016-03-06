@@ -9,22 +9,30 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".SkillListActivity">
-            <!-- Indicate that this is the Activity to launch.-->
+        <activity
+            android:name=".UserProfileActivity"
+            android:label="@string/title_activity_user_profile"
+            android:theme="@style/AppTheme.NoActionBar">
+
+            <!-- Indicate that this is the Activity to launch. -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+
+        </activity>
+
+        <activity android:name=".SkillListActivity">
         </activity>
 
         <activity
             android:name=".SkillScrollerActivity"
             android:label="@string/app_name"
             android:parentActivityName=".SkillListActivity">
+
             <!-- android:screenOrientation="portrait" -->
             <!-- android:theme="@style/AppTheme.NoActionBar" -->
         </activity>
 
     </application>
-
 </manifest>

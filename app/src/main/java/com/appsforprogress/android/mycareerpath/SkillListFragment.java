@@ -191,7 +191,6 @@ public class SkillListFragment extends Fragment
                 // Connect the RecyclerView to the Adapter
                 mSkillRecyclerView.setAdapter(mAdapter);
 
-
             }
             else
             {
@@ -199,7 +198,7 @@ public class SkillListFragment extends Fragment
                 // Give the Adapter the latest skills List
                 mAdapter.setSkills(skills);
 
-                // mostly likely reloading everything on an onPause?
+                // Just reload everything for now since the user can edit many items:
                 if (mPosition == null)
                 {
                     // Tells the adapter to reload all of the items that are visible
@@ -452,7 +451,8 @@ public class SkillListFragment extends Fragment
 
             // Start the activity to update the Skill displayed in the SkillFragment
             // expecting the return of the result of the index of the last Skill displayed:
-            startActivityForResult(intent, REQUEST_SKILL_INDEX);
+            // startActivityForResult(intent, REQUEST_SKILL_INDEX);
+            startActivity(intent);
         }
     }
 
@@ -478,7 +478,7 @@ public class SkillListFragment extends Fragment
 
             // Get the index value from the Intent sent to this Fragment by getting the INDEX
             // value sent in the extra from the SkillScrollerActivity/SkillFragment
-            mPosition = SkillScrollerActivity.getSkillIndex(data);
+            // mPosition = SkillScrollerActivity.getSkillIndex(data);
         }
     }
 }
