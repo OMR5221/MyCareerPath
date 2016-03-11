@@ -26,4 +26,15 @@
     <string name="user_name_label">User Name</string>
     <string name="first_name_hint">First Name</string>
     <string name="last_name_hint">Last Name</string>
+    <string name="user_description">User Profile Page</string>
+    <string name="user_menu_label">Me</string>
+    <string name="user_menu_description">User Profile</string>
+    <string name="details_menu_label">Details</string>
+    <string name="details_menu_description">User Attributes</string>
+    <string name="explore_menu_label">Explore</string>
+    <string name="explore_menu_description">Find Careers associated tou your skills.</string>
+    <string name="connect_menu_label">Connect</string>
+    <string name="connect_menu_description">Find your peers.</string>
+    <string name="learn_menu_label">Learn</string>
+    <string name="learn_menu_description">Find videos and courses to further your career.</string>
 </resources>

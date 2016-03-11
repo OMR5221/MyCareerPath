@@ -23,16 +23,18 @@ public class SkillDBHelper extends SQLiteOpenHelper
     @Override
     public void onCreate(SQLiteDatabase db)
     {
+        String columns =
+                "O*NET-SOC Code,Title,Element ID,Element Name,Scale ID," +
+                "Scale Name,Data Value,N,Standard Error,Lower CI Bound,Upper CI Bound," +
+                "Recommend Suppress,Not Relevant,Date";
+
         // Called to create DB and Tables if does not already exist:
         db.execSQL
         (
-            "create table " + SkillTable.TABLE_NAME + "(" +
-                " _id integer primary key autoincrement, " +
-                SkillTable.Cols.UUID + ", " +
-                SkillTable.Cols.TITLE + ", " +
-                SkillTable.Cols.DATE + ", " +
-                SkillTable.Cols.EXPERIENCE + ", " +
-                SkillTable.Cols.PEER_NAME + ")"
+            "create table " + SkillTable.TABLE_NAME +
+            "(" +
+                " _id integer primary key autoincrement, " + columns +
+            ")"
         );
     }
 
