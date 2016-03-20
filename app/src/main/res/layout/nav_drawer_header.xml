@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="150dp"
-    android:background="#FF777777"
+    android:background="@color/colorPrimary"
     android:paddingBottom="8dp"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
@@ -15,7 +15,7 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:id="@+id/imageView"
-        />
+        android:src="@drawable/ic_menu_profile_pic"/>
 
     <TextView
         android:fontFamily="sans-serif-medium"
@@ -23,13 +23,13 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="User Name"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/colorAccent"
         android:id="@+id/textView"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="User Details"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/colorAccent"
         android:id="@+id/textView2"/>
 </LinearLayout>

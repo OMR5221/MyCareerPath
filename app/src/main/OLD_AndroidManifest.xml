@@ -10,11 +10,9 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".MainMenuActivity"
-            android:label="@string/app_name" >
-            <!-- android:name=".UserProfileActivity"
+            android:name=".UserProfileActivity"
             android:label="@string/title_activity_user_profile"
-            android:theme="@style/AppTheme.NoActionBar"> -->
+            android:theme="@style/AppTheme.NoActionBar">
 
             <!-- Indicate that this is the Activity to launch. -->
             <intent-filter>
@@ -24,16 +22,6 @@
 
         </activity>
 
-        <activity
-            android:name=".AttributeDetailActivity"
-            android:label="@string/title_activity_attr_detail"
-            android:parentActivityName=".MainMenuActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.appsforprogress.android.mycareerpath.MainMenuActivity" />
-        </activity>
-
-        <!--
         <activity android:name=".SkillListActivity">
         </activity>
 
@@ -42,9 +30,9 @@
             android:label="@string/app_name"
             android:parentActivityName=".SkillListActivity">
 
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
+            <!-- android:screenOrientation="portrait" -->
+            <!-- android:theme="@style/AppTheme.NoActionBar" -->
         </activity>
-        -->
+
     </application>
 </manifest>

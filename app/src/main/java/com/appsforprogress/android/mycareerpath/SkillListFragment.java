@@ -321,7 +321,8 @@ public class SkillListFragment extends Fragment
 
         @Override
         //  Bind a skill to a holder
-        public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int index) {
+        public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int index)
+        {
             switch (viewHolder.getItemViewType())
             {
                 case 0:
