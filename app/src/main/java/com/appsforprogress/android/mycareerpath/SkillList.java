@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.appsforprogress.android.mycareerpath.database.AttributeDBHelper;
 import com.appsforprogress.android.mycareerpath.database.SkillDBHelper;
 import com.appsforprogress.android.mycareerpath.database.SkillCursorWrapper;
 import com.appsforprogress.android.mycareerpath.database.SkillDBSchema.SkillTable;
@@ -23,7 +24,7 @@ import com.appsforprogress.android.mycareerpath.database.SkillDBSchema.SkillTabl
  * Created by Oswald on 1/10/2016.
  */
 
-public class SkillList
+public class SkillList extends AttributeList
 {
     // Holds static singleton to list the various skills within
     private static SkillList sSkillList;
@@ -31,16 +32,22 @@ public class SkillList
 
     // For Database Usage:
     private Context mContext;
-    private SQLiteDatabase mSkillsDatabase;
+    private SQLiteDatabase mAttributesDatabase;
 
+    // get the SkillList object in use
+    public static SkillList get(Context context)
+    {
+        if (sSkillList == null)
+        {
+            sSkillList = new SkillList(context);
+        }
 
-    // Constructor
+        return sSkillList;
+    }
+
+    // Specific Constructor
     private SkillList(Context context)
     {
-        // Setup and open a Writable DB:
-        mContext = context.getApplicationContext();
-        mSkillsDatabase = new SkillDBHelper(mContext).getWritableDatabase();
-
         String mSkillsFileName = "Skills.csv";
         AssetManager manager = context.getAssets();
         InputStream inStream = null;
@@ -56,6 +63,7 @@ public class SkillList
         BufferedReader buffer = new BufferedReader(new InputStreamReader(inStream));
 
         Integer lineNum = 0;
+        Integer numColumns = 0;
 
         String dbCol0 = "";
         String dbCol1 = "";
@@ -75,7 +83,7 @@ public class SkillList
 
         String line;
 
-        mSkillsDatabase.beginTransaction();
+        mAttributesDatabase.beginTransaction();
 
         try
         {
@@ -85,14 +93,18 @@ public class SkillList
 
                 ContentValues cv = new ContentValues(14);
 
+                /*
                 if (columns.length != 14)
                 {
                     Log.d("CSVParser", "Skipping Bad CSV Row");
                     continue;
                 }
-                // Header Line:
+                */
+                // Header Line: Get column names
                 if (lineNum == 0)
                 {
+                    numColumns = columns.length;
+
                     dbCol0 = columns[0].trim();
                     dbCol1 = columns[1].trim();
                     dbCol2 = columns[2].trim();
@@ -110,6 +122,8 @@ public class SkillList
                     dbCol14 = columns[14].trim();
                 }
 
+                // Load the data in other rows by column
+
                 cv.put(dbCol0, columns[0].trim());
                 cv.put(dbCol1, columns[1].trim());
                 cv.put(dbCol2, columns[2].trim());
@@ -125,16 +139,13 @@ public class SkillList
                 cv.put(dbCol2, columns[12].trim());
                 cv.put(dbCol3, columns[13].trim());
 
-
-                mSkillsDatabase.insert(SkillTable.TABLE_NAME, null, cv);
+                mAttributesDatabase.insert(SkillTable.TABLE_NAME, null, cv);
             }
         }
         catch (IOException e)
         {
             e.printStackTrace();
         }
-        mSkillsDatabase.setTransactionSuccessful();
-        mSkillsDatabase.endTransaction();
 
         // Empty List of Skills
         // mSkills = new ArrayList<>();
@@ -153,37 +164,25 @@ public class SkillList
     }
 
 
-    // get the SkillList object in use
-    public static SkillList get(Context context)
-    {
-        if (sSkillList == null)
-        {
-            sSkillList = new SkillList(context);
-        }
-
-        return sSkillList;
-    }
-
-
     // Use the CursorWrapper to retrieve properly formed database record values
-    private SkillCursorWrapper querySkills(String whereClause, String[] whereArgs)
+    public SkillCursorWrapper selectRawRecords(String whereClause, String[] whereArgs)
     {
-        Cursor cursor = mSkillsDatabase.query
-        (
-            SkillTable.TABLE_NAME,
-            null, // All columns
-            whereClause,
-            whereArgs,
-            null,  // group by
-            null, // having
-            null // limit
-        );
+        Cursor cursor = mAttributesDatabase.query
+                (
+                        SkillTable.TABLE_NAME,
+                        null, // All columns
+                        whereClause,
+                        whereArgs,
+                        null,  // group by
+                        null, // having
+                        null // limit
+                );
 
         return new SkillCursorWrapper(cursor);
     }
 
     // Getter for skills List
-    public List<Skill> getSkills()
+    public List<Skill> selectFormattedRecords()
     {
         //return new ArrayList<>();
         // return mSkills;
@@ -192,7 +191,7 @@ public class SkillList
         List<Skill> skills = new ArrayList<>();
 
         // Use custom cursor to retrieve rows
-        SkillCursorWrapper cursor = querySkills(null, null);
+        SkillCursorWrapper cursor = this.selectRawRecords(null, null);
 
         try
         {
@@ -201,7 +200,7 @@ public class SkillList
             while (!cursor.isAfterLast())
             {
                 // Format the retrieved skill row
-                skills.add(cursor.getSkill());
+                skills.add(cursor.getSkillRecord());
                 cursor.moveToNext();
             }
         }
@@ -213,9 +212,25 @@ public class SkillList
         return skills;
     }
 
+    @Override
+    public ContentValues getContentValues(Object attr)
+    {
+        Skill skill = (Skill) attr;
+
+        ContentValues values = new ContentValues();
+
+        values.put(SkillTable.Cols.UUID, skill.getId().toString());
+        values.put(SkillTable.Cols.ELEMENT_NAME, skill.getElementName());
+        // values.put(SkillTable.Cols.DATE, skill.getAddedDate().getTime());
+        // values.put(SkillTable.Cols.EXPERIENCE, skill.isExperienced() ? 1 : 0);
+        values.put(SkillTable.Cols.PEER_NAME, skill.getPeerName());
+
+        return values;
+    }
+
 
     // getter to return a single skill from mSkills
-    public Skill getSkill(UUID id)
+    public Skill selectRecord(UUID id)
     {
         // Go through the skills listed in the skills List
         /*for (Skill skill : mSkills)
@@ -233,7 +248,7 @@ public class SkillList
 
 
         // Use custom cursor to retrieve row by UUID
-        SkillCursorWrapper cursor = querySkills(SkillTable.Cols.UUID + " = ?", new String[] { id.toString() });
+        SkillCursorWrapper cursor = this.selectRawRecords(SkillTable.Cols.UUID + " = ?", new String[]{id.toString()});
 
         try
         {
@@ -245,7 +260,7 @@ public class SkillList
             cursor.moveToFirst();
 
             // Return the requested Skill row formatted
-            return cursor.getSkill();
+            return cursor.getSkillRecord();
 
         }
 
@@ -256,38 +271,26 @@ public class SkillList
 
     }
 
-    // WRITE to the columns in our DB:
-    private static ContentValues getContentValues(Skill skill)
+    public void insertRecord(Object o)
     {
-        ContentValues values = new ContentValues();
-
-        values.put(SkillTable.Cols.UUID, skill.getId().toString());
-        values.put(SkillTable.Cols.TITLE, skill.getTitle());
-        values.put(SkillTable.Cols.DATE, skill.getAddedDate().getTime());
-        values.put(SkillTable.Cols.EXPERIENCE, skill.isExperienced() ? 1 : 0);
-        values.put(SkillTable.Cols.PEER_NAME, skill.getPeer());
-
-        return values;
-    }
-
-    public void addSkill(Skill newSkill)
-    {
+        Skill skill = (Skill) o;
         // mSkills.add(newSkill);
 
         // Add new ContentValue to the DB:
-        ContentValues values = getContentValues(newSkill);
+        ContentValues values = getContentValues(skill);
 
         // Arg1: Table to insert value into
         // Arg2: fail to insert if the record is null
         // Arg3: hash for skill to add
-        mSkillsDatabase.insert(SkillTable.TABLE_NAME, null, values);
+        mAttributesDatabase.insert(SkillTable.TABLE_NAME, null, values);
     }
 
-    // Delete a skill from the database:
-    public void removeSkill(Skill remSkill)
+    public void removeRecord(Object o)
     {
         // Old: for non DB usage:
         // mSkills.remove(remSkill);
+
+        Skill remSkill = (Skill) o;
 
         // Get the UUID of the Skill to be removed:
         String uuidString = remSkill.getId().toString();
@@ -295,16 +298,18 @@ public class SkillList
         // Arg1 (Table): Define the table to be updated
         // Arg2 (whereClause): Define the values to be set in the record to be updated
         // Arg3 (whereArgs): Where clause to define which record is to be updated (based on UUID)
-        mSkillsDatabase.delete
-        (
-            SkillTable.TABLE_NAME,
-            SkillTable.Cols.UUID + " = ?",
-            new String[] { uuidString }
-        );
+        mAttributesDatabase.delete
+                (
+                        SkillTable.TABLE_NAME,
+                        SkillTable.Cols.UUID + " = ?",
+                        new String[] { uuidString }
+                );
     }
 
-    public void updateSkill(Skill upSkill)
+    public void updateRecord(Object o)
     {
+        Skill upSkill = (Skill) o;
+
         String uuidString = upSkill.getId().toString();
 
         // Create a hash for the Skill record
@@ -313,7 +318,7 @@ public class SkillList
         // Arg1: Define the table to be updated
         // Arg2: Define the values to be set in the record to be updated
         // Arg3: Where clause to define which record is to be updated (based on UUID)
-        mSkillsDatabase.update
+        mAttributesDatabase.update
         (
             SkillTable.TABLE_NAME,
             values,

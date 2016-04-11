@@ -2,32 +2,51 @@ package com.appsforprogress.android.mycareerpath;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import java.util.UUID;
 
 /**
  * Created by Oswald on 3/12/2016.
  */
-public class Attribute implements Parcelable
+public class Attribute //implements Parcelable
 {
-    private static final int DETAILS_COUNT = 5;
-    private final String mAttrName;
-    private final String mCareerTitle;
-    private final String mElementId;
-    private final String mElementName;
+    // Define the fields for Skill Model
+    private UUID mId;
+    private String mAttributeType;
+    private String mONetCode;
+    private String mElementId;
+    private String mElementName;
+    private String mScaleId;
+    private Float mDataValue;
 
-    public Attribute(String attrName, String carTitle, String elemId, String elemName)
+    public Attribute(String attrType)
     {
-        mAttrName = attrName;
-        mCareerTitle = carTitle;
-        mElementId = elemId;
-        mElementName = elemName;
+        // Call the secondary constructor below with a random UUID:
+        this(UUID.randomUUID());
     }
 
-    public String getAttributeName() {
-        return mAttrName;
+    public Attribute(UUID id)
+    {
+        mId = id;
     }
 
-    public String getCareerName() {
-        return mCareerTitle;
+    // Getter for mId
+    public UUID getId()
+    {
+        return mId;
+    }
+
+    public String getAttributeType()
+    {
+        return mAttributeType;
+    }
+
+    public void setAttributeType(String attributeType)
+    {
+        mAttributeType = attributeType;
+    }
+
+    public String getONetCode() {
+        return mONetCode;
     }
 
     public String getElementId() {
@@ -38,6 +57,35 @@ public class Attribute implements Parcelable
         return mElementName;
     }
 
+    public String getScaleId() {
+        return mScaleId;
+    }
+
+    public Float getDataValue() {
+        return mDataValue;
+    }
+
+    public void setONetCode(String ONetCode) {
+        mONetCode = ONetCode;
+    }
+
+    public void setElementId(String elementId) {
+        mElementId = elementId;
+    }
+
+    public void setElementName(String elementName) {
+        mElementName = elementName;
+    }
+
+    public void setScaleId(String scaleId) {
+        mScaleId = scaleId;
+    }
+
+    public void setDataValue(Float dataValue) {
+        mDataValue = dataValue;
+    }
+
+    /*
     @Override
     public int describeContents() {
         return 0;
@@ -46,24 +94,25 @@ public class Attribute implements Parcelable
     @Override
     public void writeToParcel(Parcel dest, int flags)
     {
-        dest.writeString(this.mAttrName);
-        dest.writeString(this.mCareerTitle);
+        dest.writeString(this.mONetCode);
         dest.writeString(this.mElementId);
         dest.writeString(this.mElementName);
+        dest.writeString(this.mScaleId);
     }
 
     private Attribute(Parcel in)
     {
-        this.mAttrName = in.readString();
-        this.mCareerTitle = in.readString();
+        this.mONetCode = in.readString();
         this.mElementId = in.readString();
         this.mElementName = in.readString();
+        this.mScaleId = in.readString();
     }
 
     public static final Parcelable.Creator<Attribute> CREATOR = new Parcelable.Creator<Attribute>()
     {
         public Attribute createFromParcel(Parcel source)
         {
+
             return new Attribute(source);
         }
 
@@ -72,4 +121,5 @@ public class Attribute implements Parcelable
             return new Attribute[size];
         }
     };
+    */
 }

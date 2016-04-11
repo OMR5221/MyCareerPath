@@ -63,6 +63,7 @@ public class AttributeTabPagerAdapter extends FragmentPagerAdapter
     // Set the correct AttributeListFragment based on position:
     public Fragment getItem(int position)
     {
+        // Automatically creates the AttributeTabFragment with the intended AttributeType:
         switch (position)
         {
             case 0:
@@ -71,7 +72,7 @@ public class AttributeTabPagerAdapter extends FragmentPagerAdapter
             case 3:
             case 4:
                 // Create a new Attribute List fragment for each tab position:
-                return AttributeListFragment.newInstance(mAttributeTabs[position]);
+                return AttributeTabFragment.newInstance(mAttributeTabs[position]);
         }
         throw new IllegalArgumentException("Unhandled position: " + position);
     }
@@ -87,7 +88,7 @@ public class AttributeTabPagerAdapter extends FragmentPagerAdapter
     }
 
     // Generate a simple UUID for the tab selected from the Attribute Menu and the tab position index:
-    public long getItemId(int position)
+    public long getTabPosition(int position)
     {
 
         switch (position)

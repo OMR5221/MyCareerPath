@@ -15,7 +15,7 @@ import java.util.UUID;
 
 // Wrap custom methods around a Cursor to alter Database query records
 // to cast the data palled out of the Database into Java compatible data types
-public class SkillCursorWrapper extends CursorWrapper
+public class SkillCursorWrapper extends AttributeCursorWrapper
 {
 
     /**
@@ -29,21 +29,33 @@ public class SkillCursorWrapper extends CursorWrapper
     }
 
     // READ values from columns in our DB:
-    public Skill getSkill()
+    public Skill getSkillRecord()
     {
+        super.getAttributeRecord();
+
         // Retrieve Database record and cast to Java data types
-        String uuidString = getString(getColumnIndex(SkillTable.Cols.UUID));
-        String title = getString(getColumnIndex(SkillTable.Cols.TITLE));
-        long date = getLong(getColumnIndex(SkillTable.Cols.DATE));
-        int hasExperience = getInt(getColumnIndex(SkillTable.Cols.EXPERIENCE));
+        int n = getInt(getColumnIndex(SkillTable.Cols.N_VALUE));
+        Float stdError = getFloat(getColumnIndex(SkillTable.Cols.STANDARD_ERROR));
+        Float lowCIBound = getFloat(getColumnIndex(SkillTable.Cols.LOWER_CI_BOUND));
+        Float upCIBound = getFloat(getColumnIndex(SkillTable.Cols.UPPER_CI_BOUND));
+        String recSuppress = getString(getColumnIndex(SkillTable.Cols.RECOMMEND_SUPPRESS));
+        String notRelevant = getString(getColumnIndex(SkillTable.Cols.NOT_RELEVANT));
+        // long date = getLong(getColumnIndex(SkillTable.Cols.DATE));
         String peerName = getString(getColumnIndex(SkillTable.Cols.PEER_NAME));
+        Integer proficiency = getInt(getColumnIndex(SkillTable.Cols.PROFICIENCY));
 
         // Create a new Skill and assign values retrieved from the Database for display in SkillFragment
-        Skill skill = new Skill(UUID.fromString(uuidString));
-        skill.setTitle(title);
-        skill.setAddedDate(new Date(date));
-        skill.setExperienced(hasExperience != 0);
-        skill.setPeer(peerName);
+        Skill skill = new Skill();
+        skill.setN(n);
+        skill.setStandardError(stdError);
+        skill.setLowerCIBound(lowCIBound);
+        skill.setUpperCIBound(upCIBound);
+        skill.setRecommendSuppressStr(recSuppress);
+        skill.setNotRelevantStr(notRelevant);
+        skill.setPeerName(peerName);
+        skill.setProficiency(proficiency);
+        // skill.setAddedDate(new Date(date));
+        // skill.setExperienced(hasExperience != 0);
 
         return skill;
     }

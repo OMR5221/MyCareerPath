@@ -24,9 +24,9 @@ public class SkillDBHelper extends SQLiteOpenHelper
     public void onCreate(SQLiteDatabase db)
     {
         String columns =
-                "O*NET-SOC Code,Title,Element ID,Element Name,Scale ID," +
+                "O*NET-SOC Code,Element ID,Element Name,Scale ID," +
                 "Scale Name,Data Value,N,Standard Error,Lower CI Bound,Upper CI Bound," +
-                "Recommend Suppress,Not Relevant,Date";
+                "Recommend Suppress,Not Relevant";
 
         // Called to create DB and Tables if does not already exist:
         db.execSQL

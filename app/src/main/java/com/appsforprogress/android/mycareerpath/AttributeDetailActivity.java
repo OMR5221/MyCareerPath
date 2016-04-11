@@ -20,7 +20,7 @@ public class AttributeDetailActivity extends AppCompatActivity
     public static void startActivity(Context context, Attribute attr)
     {
         final Intent intent = new Intent(context, AttributeDetailActivity.class);
-        intent.putExtra(EXTRA_ATTRIBUTE, attr);
+        intent.putExtra(EXTRA_ATTRIBUTE, attr.getAttributeType());
         context.startActivity(intent);
     }
 
@@ -41,8 +41,8 @@ public class AttributeDetailActivity extends AppCompatActivity
             throw new IllegalStateException("Tool not available as extra; use startActivity when creating an activity instance");
         }
 
-        findAndSetTextView(R.id.detail_attribute_name, attr.getAttributeName());
-        findAndSetTextView(R.id.detail_career_name, attr.getCareerName());
+        findAndSetTextView(R.id.detail_attribute_name, attr.getAttributeType());
+        //findAndSetTextView(R.id.detail_career_name, attr.);
         findAndSetTextView(R.id.detail_element_name, attr.getElementName());
         //findAndSetTextView(R.id.detail_0, tool.getDetails()[0]);
         //findAndSetTextView(R.id.detail_1, tool.getDetails()[1]);

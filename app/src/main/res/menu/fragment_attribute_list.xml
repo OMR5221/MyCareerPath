@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto" >
+
+    <!-- Menu item to add a new skill to the skill list -->
+    <item
+        android:id="@+id/menu_item_new_skill"
+        android:title="@string/new_skill"
+        android:icon="@drawable/ic_menu_add"
+        app:showAsAction="ifRoom|withText"/>
+
+    <!-- Menu item to show the count of skills
+    <item
+        android:id="@+id/menu_item_show_count"
+        android:title="@string/show_count"
+        app:showAsAction="ifRoom"/>
+    -->
+
+</menu>

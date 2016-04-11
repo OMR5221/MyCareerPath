@@ -7,28 +7,28 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Oswald on 1/16/2016.
  */
-public class SkillListFragment extends Fragment
+public class AttributeTabFragment<T> extends Fragment
 {
-    private RecyclerView mSkillRecyclerView;
-    private TextView mNoSkillTextView;
-    private SkillAdapter mAdapter;
+    private RecyclerView mAttributeRecyclerView;
+    private TextView mNoAttributeTextView;
+    private AttributeAdapter mAdapter;
     private Integer mPosition;
     private Integer mViewId;
     private boolean mCountMenuVisible;
@@ -36,13 +36,63 @@ public class SkillListFragment extends Fragment
     private static final Integer REQUEST_SKILL_INDEX = 1;
     private Integer mPriorCount;
     private Integer mCurrentCount;
-    private Integer mSkillCount;
+    private Integer mAttributeCount;
+    private static final String ARG_ATTR_TYPE = "attrType";
+    private static final String ARG_ATTR_TAB = "attrTab";
+    private String mAttrName;
+    private AttributeTabPagerAdapter.AttributeTab mAttrTab;
+    private AttributeArrayAdapter mAttrArrayAdapter;
+    private final String fPackageName = "com.appsforprogress.android.mycareerpath";
+    private static Object mAttributeList;
+    // private ArrayList<T> mAttributes;
+
+
+    // Create a new Fragment with the AttributeType in the Tab Object to be created.
+    public static AttributeTabFragment newInstance(AttributeTabPagerAdapter.AttributeTab attrTab)
+    {
+        final AttributeTabFragment fragment = new AttributeTabFragment();
+        final Bundle args = new Bundle();
+        // args.putString(ARG_ATTR_TYPE, toolType.name());
+
+        // Set the tab passed into the List as an argument when creating the object:
+        args.putString(ARG_ATTR_TAB, attrTab.name());
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public AttributeTabFragment()
+    {
+        // Requires an empty public constructor
+    }
 
     @Override
     //
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        final Bundle args = getArguments();
+
+        if (args == null)
+        {
+            throw new IllegalStateException("No arguments set; use newInstance when constructing!");
+        }
+
+        // mAttrType = AttributeType.valueOf(args.getString(ARG_ATTR_TYPE));
+
+        // Get the Tab we are currently on:
+        mAttrTab = AttributeTabPagerAdapter.AttributeTab.valueOf(args.getString(ARG_ATTR_TAB));
+
+        // Generate a test list of Attributes by the Tab we are currently on -> Replace with DB records
+        // final ArrayList<Attribute> attrs = new AttributeTestDataGen(mAttrTab.hashCode()).getTestAttributes(mAttrTab, 20);
+
+        // Load DB records per attribute into the ListView: Get reference to our AttributeList Object
+        // AttributeList attrs = AttributeList.get(getActivity());
+
+        // Create a list of the Attribute items to be handled by the ArrayAdapter
+        // mAttrArrayAdapter = new AttributeArrayAdapter(getActivity(), attrs);
+
+        // setListAdapter(attrs.getAttributes);
 
         // Tells the FragmentManager that this Fragment has a menu
         // so the onCreateOptionsMenu() needs to be run:
@@ -51,13 +101,13 @@ public class SkillListFragment extends Fragment
 
 
     @Override
-    // Creates the Activities Menu:
+    // Create the Activities Menu:
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
     {
         // Inflate the Menu resource layout
         super.onCreateOptionsMenu(menu, inflater);
 
-        inflater.inflate(R.menu.fragment_skill_list, menu);
+        inflater.inflate(R.menu.fragment_attribute_list, menu);
 
         /* Get the countMenu reference:
         MenuItem countItem = menu.findItem(R.id.menu_item_show_count);
@@ -69,7 +119,6 @@ public class SkillListFragment extends Fragment
             countItem.setTitle(R.string.show_count);
         }
         */
-
     }
 
     @Override
@@ -115,17 +164,17 @@ public class SkillListFragment extends Fragment
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-
         // Initialize view from the fragment_skill_list layout file
-        View view = inflater.inflate(R.layout.fragment_skill_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_attribute_list, container, false);
 
         // Reference to the Views Recycler widget:
-        mSkillRecyclerView = (RecyclerView) view.findViewById(R.id.skill_recycler_view);
+        mAttributeRecyclerView = (RecyclerView) view.findViewById(R.id.attribute_recycler_view);
 
-        mNoSkillTextView = (TextView) view.findViewById(R.id.no_skills_text_view);
+        // Reference to a TextView when no attribute is present:
+        mNoAttributeTextView = (TextView) view.findViewById(R.id.no_attribute_text_view);
 
         // Create a LinearLayout object to manage positioning of items and scrolling in a list vertically:
-        mSkillRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mAttributeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         /*
         Check if we have added additional values to the savedInstanceState (Bundle)
@@ -147,9 +196,6 @@ public class SkillListFragment extends Fragment
     {
         super.onResume();
 
-        // Get current Count of skill list items:
-        mCurrentCount = getSkillListCount();
-
         updateUI();
     }
 
@@ -166,38 +212,81 @@ public class SkillListFragment extends Fragment
     // and setting up the RecyclerView's Adapter
     private void updateUI()
     {
-        // Get reference to our SkillList Object
-        SkillList skillList = SkillList.get(getActivity());
+        final Bundle args = getArguments();
 
-        // Create a new list of skills and copy the elements of our SkillList object
-        List<Skill> skills = skillList.selectFormattedRecords();
-
-        mSkillCount = skills.size();
-
-        if (mSkillCount == 0)
-        {
-            mSkillRecyclerView.setVisibility(View.GONE);
-            mNoSkillTextView.setVisibility(View.VISIBLE);
+        if (args == null) {
+            throw new IllegalStateException("No arguments set; use newInstance when constructing!");
         }
-        else
+
+        mAttrName = args.getString(ARG_ATTR_TYPE);
+
+        // Get the Tab we are currently on:
+        mAttrTab = AttributeTabPagerAdapter.AttributeTab.valueOf(args.getString(ARG_ATTR_TAB));
+
+        mAttributeList = AttributeListController.get(this.getActivity(), mAttrName);
+
+        // Class c = mAttributeList.getClass();
+
+        List<? extends Attribute> attributes = null;
+
+        // Get reference to our AttributeList using the AttributeListController:
+        switch (mAttrName)
         {
+            case "SKILL":
+
+                attributes =  new ArrayList<Skill>();
+
+            case "ATTRIBUTE":
+
+                attributes = new ArrayList<Attribute>();
+
+        }
+
+        // Get a reference to the active Skill List available:
+        try {
+
+            Method m = mAttributeList.getClass().getMethod("selectFormattedRecords");
+
+            try {
+                m.invoke(attributes);
+            } catch (IllegalAccessException e) {
+                System.err.println("The method specified does not exist.");
+                System.exit(0);
+            } catch (InvocationTargetException e) {
+                System.err.println("The method specified does not exist.");
+                System.exit(0);
+            }
+        } catch (NoSuchMethodException e) {
+            System.err.println("The method specified does not exist.");
+            System.exit(0);
+        }
+
+        mAttributeCount = attributes.size();
+
+        if (mAttributeCount == 0)
+        {
+            mAttributeRecyclerView.setVisibility(View.GONE);
+            mNoAttributeTextView.setVisibility(View.VISIBLE);
+        }
+
+        else {
 
             // Set up the adapter if it is not already in place:
             if (mAdapter == null)
             {
 
                 // Create an adapter and pass the List of skills for it to manage
-                mAdapter = new SkillAdapter(skills);
+                mAdapter = new AttributeAdapter(attributes);
 
                 // Connect the RecyclerView to the Adapter
-                mSkillRecyclerView.setAdapter(mAdapter);
+                mAttributeRecyclerView.setAdapter(mAdapter);
 
             }
-            else
-            {
+
+            else {
 
                 // Give the Adapter the latest skills List
-                mAdapter.setSkills(skills);
+                mAdapter.setAttributes(attributes);
 
                 // Just reload everything for now since the user can edit many items:
                 if (mPosition == null)
@@ -207,12 +296,12 @@ public class SkillListFragment extends Fragment
                     mAdapter.notifyDataSetChanged();
 
                 }
-                else
-                {
+                else {
 
                     // Log.d("Data Item Changed:", "About to reload Adapter holder item that was edited.", new Exception());
                     // Log.d("Prior Count:", "About to reload Adapter holder item that was edited.", new Exception());
-                    // We have deleted a single item from the SkillList
+
+                    // We have deleted a single item from the AttributeList
                     if (mPriorCount > mCurrentCount)
                     {
                         // Tell the adapter to expect that the holder's data was removed
@@ -223,32 +312,104 @@ public class SkillListFragment extends Fragment
                         mAdapter.notifyItemRangeChanged(mPosition, mItemCount);
                     }
                     // We have edited an item from the SkillList
-                    else
-                    {
+                    else {
                         // Tell the adapter to reload only the item that was edited in the detail View
                         mAdapter.notifyItemChanged(mPosition);
                     }
                 }
             }
 
-            mSkillRecyclerView.setVisibility(View.VISIBLE);
-            mNoSkillTextView.setVisibility(View.GONE);
+            mAttributeRecyclerView.setVisibility(View.VISIBLE);
+            mNoAttributeTextView.setVisibility(View.GONE);
         }
 
-
-        // Update the skill count one refresh of the SkillList UI
+        // Update the skill count on refresh of the UI
         updateCount();
+    }
 
+    private <T extends Attribute> T getSubClass(T attr, Class<T> type)
+    {
+        return type.cast(attr);
+    }
+
+
+    private <I, O> O callMethod(String methodName, I inObj, Class<O> outType)
+    {
+        // Get the Class Object:
+        Class<?> c = outType;
+
+        Constructor<?> ct;
+
+        Object o = null;
+
+        O output = null;
+
+        try {
+
+            ct = c.getConstructor();
+
+            try {
+                // Create a new Instance of the Class
+                o = ct.newInstance();
+
+                output = outType.cast(o);
+            }
+            catch (java.lang.InstantiationException is)
+            {
+                System.err.println("Cannot create an instance of the Class.");
+                System.exit(0);
+            }
+            catch (IllegalAccessException ia)
+            {
+                System.err.println("No access to create an instance of this Class.");
+                System.exit(0);
+            }
+            catch (InvocationTargetException iv)
+            {
+                System.err.println("AttributeList: Issue invoking instance of Object.");
+                System.exit(0);
+            }
+        }
+        catch (NoSuchMethodException e)
+        {
+            System.err.println("No applicable Constructor found.");
+            System.exit(0);
+        }
+
+        // Try to invoke the methodName passed in:
+        try {
+            // GET the method to be invoked:
+            Method m = inObj.getClass().getMethod(methodName);
+
+            try {
+                // Attempt to invoke the method found:
+                m.invoke(output);
+            }
+            catch (IllegalAccessException ia) {
+                System.err.println("No access to create an instance of this Class.");
+                System.exit(0);
+            }
+            catch (InvocationTargetException iv) {
+                System.err.println("AttributeList: Issue invoking instance of Object.");
+                System.exit(0);
+            }
+        }
+        catch (NoSuchMethodException e) {
+            System.err.println("The method specified does not exist.");
+            System.exit(0);
+        }
+
+        return output;
     }
 
     // Code to show count when menu option selected:
     private void updateCount()
     {
         // Get the int count of skills
-        int skillCount = getSkillListCount();
+        int attributeCount = mAttributeCount;
 
         // Convert the int count to a string
-        String skillCountStr = getResources().getQuantityString(R.plurals.subtitle_format, skillCount, skillCount);
+        String attrCountStr = getResources().getQuantityString(R.plurals.subtitle_format, attributeCount, attributeCount);
 
         /* if the menu is not visible then set to null
         if (!mCountMenuVisible)
@@ -260,17 +421,7 @@ public class SkillListFragment extends Fragment
         AppCompatActivity activity = (AppCompatActivity) getActivity();
 
         // Use the AppCompat activity to update the toolbar
-        activity.getSupportActionBar().setSubtitle(skillCountStr);
-    }
-
-    private int getSkillListCount()
-    {
-        SkillList skillList = SkillList.get(getActivity());
-
-        // Get the int count of skills
-        int skillCount = skillList.selectFormattedRecords().size();
-
-        return skillCount;
+        activity.getSupportActionBar().setSubtitle(attrCountStr);
     }
 
 
@@ -280,18 +431,18 @@ public class SkillListFragment extends Fragment
     // 1. created a ViewHolder or
     // 2. bind a View to a ViewHolder
     // to a Skill Object
-    private class SkillAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
+    private class AttributeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     {
-        private List<Skill> mSkills;
+        // Create a list of the Attribute Type currently selected by tab:
+        private List<? extends Attribute> mAttributes;
 
-        public SkillAdapter(List<Skill> skills)
+        public AttributeAdapter(List<? extends Attribute> attributes)
         {
             // Initialize adapter to manage a list of skills
-            mSkills = skills;
+            mAttributes = attributes;
 
-            getItemViewType(getItemCount());
+            getItemViewType(mAttrTab.getStringResource());
         }
-
 
         @Override
         // Called by the RecyclerView when it needs a new View to display an item
@@ -299,25 +450,24 @@ public class SkillListFragment extends Fragment
         {
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
 
-            int listViewItemType = getItemViewType(viewType);
-
-            switch (listViewItemType)
+            switch (viewType)
             {
                 case 0:
                     // Create a simple TextView using the android library when no skills present:
-                    View noSkillView = layoutInflater.inflate(android.R.layout.simple_list_item_1, parent, false);
-
-                    // Create a new SkillHolder to hold the TextView
-                    return new NoSkillHolder(noSkillView);
-
-                default:
-
-                    // Create our custom Skill View item:
                     View skillView = layoutInflater.inflate(R.layout.list_item_skill, parent, false);
 
                     // Create a new SkillHolder to hold the TextView
                     return new SkillHolder(skillView);
+
+                default:
+
+                    // Create a simple TextView using the android library when no skills present:
+                    View noAttributeView = layoutInflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+
+                    // Create a new SkillHolder to hold the TextView
+                    return new SkillHolder(noAttributeView);
             }
+
         }
 
         @Override
@@ -328,20 +478,20 @@ public class SkillListFragment extends Fragment
             {
                 case 0:
 
-                    NoSkillHolder noSkillHolder = (NoSkillHolder) viewHolder;
-
-                    // Place the text in the TextView held by the holder to the skill object's Title
-                    noSkillHolder.mNoSkillTextView.setText(R.string.no_skills);
-
-                default:
-
-                    // Get a skill from the skills List (Model Data)
-                    Skill skill = mSkills.get(index);
+                    Skill skill = (Skill) mAttributes.get(index);
 
                     SkillHolder skillHolder = (SkillHolder) viewHolder;
 
                     // Place the text in the TextView held by the holder to the skill object's Title
-                    skillHolder.bindSkill(skill);
+                    skillHolder.mLowerCIBoundTextView.setText(R.string.no_skills);
+
+                    skillHolder.bindAttribute(skill);
+
+                    break;
+
+                default:
+
+                    break;
 
             }
         }
@@ -350,7 +500,7 @@ public class SkillListFragment extends Fragment
         // Return the number of items in the data set held by the adapter
         public int getItemCount()
         {
-            return mSkills.size();
+            return mAttributes.size();
         }
 
         @Override
@@ -362,50 +512,37 @@ public class SkillListFragment extends Fragment
         @Override
         public int getItemViewType(int position)
         {
-            // return super.getItemViewType(position);
-            return this.getItemCount();
+            // return the int of the tab we are currently on:
+            return position;
 
         }
 
         // Update the Adapters listing of skills
-        public void setSkills(List<Skill> skills)
+        public void setAttributes(List<? extends Attribute> attributes)
         {
-            mSkills = skills;
-        }
-    }
-
-    // Add a SkillHolder when no Skills are present:
-    private class NoSkillHolder extends RecyclerView.ViewHolder
-    {
-        public TextView mNoSkillTextView;
-
-        public NoSkillHolder(View itemView)
-        {
-            super(itemView);
-
-            // Create a TextView to display message
-            mNoSkillTextView = (TextView) itemView.findViewById(R.id.no_skills_text_view);
+            mAttributes = attributes;
         }
     }
 
     // Set up the RecyclerView's ViewHolder: holds a reference to a view widget
-    private class SkillHolder extends RecyclerView.ViewHolder implements View.OnClickListener
+    protected abstract class AttributeHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
-        private TextView mTitleTextView;
-        private TextView mDateAddedTextView;
-        private CheckBox mExperienceCheckBox;
-        private Skill mSkill;
+        // Attribute Fields to display in Listing:
+        private TextView mElementNameTextView;
+        // private TextView mDateAddedTextView;
+        // private CheckBox mExperienceCheckBox;
 
-        public SkillHolder(View itemView)
+        public AttributeHolder(View itemView)
         {
             super(itemView);
 
             itemView.setOnClickListener(this);
 
             // Get references to the widgets described by our custom layout for a skill list item
-            mTitleTextView = (TextView) itemView.findViewById(R.id.list_item_skill_title_text_view);
-            mDateAddedTextView = (TextView) itemView.findViewById(R.id.list_item_skill_date_text_view);
-            mExperienceCheckBox = (CheckBox) itemView.findViewById(R.id.list_item_skill_exp_check_box);
+            mElementNameTextView = (TextView) itemView.findViewById(R.id.list_item_skill_title_text_view);
+
+            //mDateAddedTextView = (TextView) itemView.findViewById(R.id.list_item_skill_date_text_view);
+            //mExperienceCheckBox = (CheckBox) itemView.findViewById(R.id.list_item_skill_exp_check_box);
 
             // Disable checkbox grays it out: mExperienceCheckBox.setEnabled(false);
 
@@ -424,14 +561,53 @@ public class SkillListFragment extends Fragment
             */
         }
 
+
         // Get a skill and bind its fields to the RecyclerView.Holder
         // initially when the holder is first created
-        public void bindSkill(Skill skill)
+        public <T> void bindAttribute(T attr)
         {
-            mSkill = skill;
-            mTitleTextView.setText(mSkill.getElementName());
+            String outText = null;
+
+            outText = callMethod("getElementName", attr, String.class);
+
+            mElementNameTextView.setText(outText);
+
+            outText = callMethod("getElementName", attr, String.class);
+
             // mDateAddedTextView.setText(mSkill.getAddedDate().toString());
             // mExperienceCheckBox.setChecked(mSkill.isExperienced());
+        }
+
+        @Override
+        public abstract void onClick(View v);
+    }
+
+    // Add a NoAttributeHolder when no Attributes are present:
+    private class SkillHolder extends AttributeHolder
+    {
+        private Skill mSkill;
+
+        private TextView mLowerCIBoundTextView;
+
+        public SkillHolder(View itemView)
+        {
+            super(itemView);
+
+            // Create a TextView to Skill specific fields:
+            mLowerCIBoundTextView = (TextView) itemView.findViewById(R.id.no_skills_text_view);
+        }
+
+        public <T> void bindAttribute(T attr)
+        {
+            mSkill = (Skill) attr;
+
+            String outText = null;
+
+            outText = callMethod("getElementName", attr, String.class);
+
+            mLowerCIBoundTextView = (TextView) itemView.findViewById(R.id.list_item_skill_title_text_view);
+
+            mLowerCIBoundTextView.setText(outText);
         }
 
         @Override
@@ -441,7 +617,7 @@ public class SkillListFragment extends Fragment
             // Toast.makeText(getActivity(), mSkill.getTitle() + " Clicked!", Toast.LENGTH_SHORT).show();
 
             // Get the prior Count of the number of items in our SkillList
-            mPriorCount = getSkillListCount();
+            mPriorCount = mAttributeCount;
 
             // Create an Intent to start the Skill Scroller Activity's intent
             // to update the SkillFragment
@@ -457,6 +633,7 @@ public class SkillListFragment extends Fragment
             startActivity(intent);
         }
     }
+
 
     @Override
     // Have this Fragment process the result Intent sent from SkillFragment

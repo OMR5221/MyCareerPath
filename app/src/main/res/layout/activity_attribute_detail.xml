@@ -50,6 +50,7 @@
                 android:layout_above="@+id/element_name"
                 android:layout_alignStart="@+id/detail_image"
                 android:layout_alignLeft="@+id/detail_image"
+                android:layout_below="@+id/detail_image"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:textSize="20sp"

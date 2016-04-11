@@ -1,5 +1,8 @@
 package com.appsforprogress.android.mycareerpath;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.security.PublicKey;
 import java.util.Date;
 import java.util.UUID;
@@ -7,75 +10,144 @@ import java.util.UUID;
 /**
  * Created by Oswald on 1/3/2016.
  */
-public class Skill
+public class Skill extends Attribute
 {
-    // Define the fields for Skill Model
-    private UUID mId;
-    private String mTitle;
-    private Date mAddedDate;
-    private boolean mExperienced;
-    // String for name of peer providing endorsement:
-    private String mPeer;
-    private Integer mIndex;
+    // DB Specific Fields:
+    private Integer mN;
+    private Float mStandardError;
+    private Float mLowerCIBound;
+    private Float mUpperCIBound;
+    private String mRecommendSuppressStr;
+    private Boolean mRecommendSuppressBool;
+    private String mNotRelevantStr; // Should be converted into a boolean
+    private Boolean mNotRelevantBool;
 
-    // Define constructor for the Skill Model
+    // App Specific Fields:
+    private Integer mProficiency;
+    // String for name of peer providing endorsement:
+    private String mPeerName;
+
+    // Define default Constructor:
     public Skill()
     {
-        /* OLD: Generate a unique identifier
-        mId = UUID.randomUUID();
-        mAddedDate = new Date(); */
-
-        // Call the secondary constructor below with a random UUID:
-        this(UUID.randomUUID());
+        super("Skill");
     }
 
-    public Skill(UUID id)
+    // Getter and setters:
+    public Integer getN()
     {
-        mId = id;
-        mAddedDate = new Date();
+        return mN;
     }
 
-    // Getter for mId
-    public UUID getId() {
-        return mId;
+    public void setN(Integer n) {
+        mN = n;
     }
 
-    // Getter and setter for the Skill Title
-    public String getTitle() {
-        return mTitle;
+    public Float getStandardError() {
+        return mStandardError;
     }
 
-    public void setTitle(String title) {
-        mTitle = title;
+    public void setStandardError(Float standardError) {
+        mStandardError = standardError;
     }
 
-    // Getter and setter for Date
-
-    public Date getAddedDate() {
-        return mAddedDate;
+    public Float getLowerCIBound() {
+        return mLowerCIBound;
     }
 
-    public void setAddedDate(Date addedDate) {
-        mAddedDate = addedDate;
+    public void setLowerCIBound(Float lowerCIBound) {
+        mLowerCIBound = lowerCIBound;
     }
 
-    // Getter and setter for Experienced boolean
-
-    public boolean isExperienced() {
-        return mExperienced;
+    public Float getUpperCIBound() {
+        return mUpperCIBound;
     }
 
-    public void setExperienced(boolean experienced) {
-        mExperienced = experienced;
+    public void setUpperCIBound(Float upperCIBound) {
+        mUpperCIBound = upperCIBound;
     }
 
-    public void setPeer(String peerName)
+    public String getRecommendSuppressStr() {
+        return mRecommendSuppressStr;
+    }
+
+    public void setRecommendSuppressStr(String recommendSuppressStr) {
+        mRecommendSuppressStr = recommendSuppressStr;
+    }
+
+    public Boolean getRecommendSuppressBool() {
+        return mRecommendSuppressBool;
+    }
+
+    public void setRecommendSuppressBool(Boolean recommendSuppressBool) {
+        mRecommendSuppressBool = recommendSuppressBool;
+    }
+
+    public String getNotRelevantStr() {
+        return mNotRelevantStr;
+    }
+
+    public void setNotRelevantStr(String notRelevantStr) {
+        mNotRelevantStr = notRelevantStr;
+    }
+
+    public Boolean getNotRelevantBool() {
+        return mNotRelevantBool;
+    }
+
+    public void setNotRelevantBool(Boolean notRelevantBool) {
+        mNotRelevantBool = notRelevantBool;
+    }
+
+    public Integer getProficiency() {
+        return mProficiency;
+    }
+
+    public void setProficiency(Integer proficiency) {
+        mProficiency = proficiency;
+    }
+
+    public String getPeerName() {
+        return mPeerName;
+    }
+
+    public void setPeerName(String peerName) {
+        mPeerName = peerName;
+    }
+
+    /*
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags)
     {
-        mPeer = peerName;
+        dest.writeString(this.mRecommendSuppressStr);
+        dest.writeString(this.mNotRelevantStr);
+        dest.writeString(this.mPeerName);
     }
 
-    public String getPeer()
+    private Skill(Parcel in)
     {
-        return mPeer;
+
+        this.mRecommendSuppressStr = in.readString();
+        this.mNotRelevantStr = in.readString();
     }
+
+    public static final Parcelable.Creator<Attribute> CREATOR = new Parcelable.Creator<Attribute>()
+    {
+        public Attribute createFromParcel(Parcel source)
+        {
+
+            return new Skill(source);
+        }
+
+        public Attribute[] newArray(int size)
+        {
+            return new Attribute[size];
+        }
+    };
+    */
 }

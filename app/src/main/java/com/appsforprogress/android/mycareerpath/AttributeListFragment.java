@@ -8,20 +8,22 @@ import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.widget.AdapterView;
 import java.util.ArrayList;
+import java.util.List;
 
-public class AttributeListFragment extends ListFragment implements AdapterView.OnItemClickListener
+public class AttributeListFragment<T extends Attribute> extends ListFragment implements AdapterView.OnItemClickListener
 {
 
     private static final String ARG_ATTR_TYPE = "attrType";
     private static final String ARG_ATTR_TAB = "attrTab";
 
-    private AttributeType mAttrType;
     private AttributeTabPagerAdapter.AttributeTab mAttrTab;
     private AttributeArrayAdapter mAttrArrayAdapter;
+    private String mAttrType;
 
     public static AttributeListFragment newInstance(AttributeTabPagerAdapter.AttributeTab attrTab)
     {
-        final AttributeListFragment fragment = new AttributeListFragment();
+        String attrType = attrTab.name();
+        final AttributeListFragment fragment = new AttributeListFragment(attrType);
         final Bundle args = new Bundle();
         // args.putString(ARG_ATTR_TYPE, toolType.name());
 
@@ -31,9 +33,10 @@ public class AttributeListFragment extends ListFragment implements AdapterView.O
         return fragment;
     }
 
-    public AttributeListFragment()
+    public AttributeListFragment(String attrType)
     {
-        // Required empty public constructor
+        // Requires an empty public constructor
+        mAttrType = attrType;
     }
 
     @Override
@@ -51,11 +54,17 @@ public class AttributeListFragment extends ListFragment implements AdapterView.O
         // Get the Tab we are currently on:
         mAttrTab = AttributeTabPagerAdapter.AttributeTab.valueOf(args.getString(ARG_ATTR_TAB));
 
-        // Generate a list of Attributes by the Tab we are currently on:
-        final ArrayList<Attribute> attrs = new AttributeTestDataGen(mAttrTab.hashCode()).getTestAttributes(mAttrTab, 20);
+        SkillList skills = SkillList.get(getActivity());
+
+        // Generate a test list of Attributes by the Tab we are currently on -> Replace with DB records
+        final List<Skill> skillList = skills.selectFormattedRecords();
+
+        // Load DB records per attribute into the ListView: Get reference to our AttributeList Object
+        mAttrArrayAdapter = new AttributeArrayAdapter(getActivity(), skillList, mAttrType);
 
         // Create a list of the Attribute items to be handled by the ArrayAdapter
-        mAttrArrayAdapter = new AttributeArrayAdapter(getActivity(), attrs);
+        // mAttrArrayAdapter = new AttributeArrayAdapter(getActivity(), attrs);
+
         setListAdapter(mAttrArrayAdapter);
     }
 
@@ -66,7 +75,8 @@ public class AttributeListFragment extends ListFragment implements AdapterView.O
     }
 
     @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
+    {
         final Attribute attr = mAttrArrayAdapter.getItem(position);
         AttributeDetailActivity.startActivity(getActivity(), attr);
     }
