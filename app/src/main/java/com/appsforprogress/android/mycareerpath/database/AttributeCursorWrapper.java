@@ -38,6 +38,7 @@ public class AttributeCursorWrapper extends CursorWrapper
         String elementName = getString(getColumnIndex(AttributeTable.Cols.ELEMENT_NAME));
         String scaleId = getString(getColumnIndex(AttributeTable.Cols.SCALE_ID));
         Float dataValue = getFloat(getColumnIndex(AttributeTable.Cols.DATA_VALUE));
+        Long dateAdded = getLong(getColumnIndex(AttributeTable.Cols.DATE_ADDED));
 
         // Create a new Attribute of attrType and assign values retrieved from the Database for display in AttrTypeFragment
         Attribute attribute = new Attribute(UUID.fromString(uuidString));
@@ -46,6 +47,7 @@ public class AttributeCursorWrapper extends CursorWrapper
         attribute.setElementName(elementName);
         attribute.setScaleId(scaleId);
         attribute.setDataValue(dataValue);
+        attribute.setDateAdded(new Date(dateAdded));
 
         return attribute;
     }

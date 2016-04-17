@@ -2,6 +2,8 @@ package com.appsforprogress.android.mycareerpath;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -17,6 +19,8 @@ public class Attribute //implements Parcelable
     private String mElementName;
     private String mScaleId;
     private Float mDataValue;
+    private Date mDateAdded;
+
 
     public Attribute(String attrType)
     {
@@ -65,6 +69,10 @@ public class Attribute //implements Parcelable
         return mDataValue;
     }
 
+    public Date getDateAdded() {
+        return mDateAdded;
+    }
+
     public void setONetCode(String ONetCode) {
         mONetCode = ONetCode;
     }
@@ -83,6 +91,10 @@ public class Attribute //implements Parcelable
 
     public void setDataValue(Float dataValue) {
         mDataValue = dataValue;
+    }
+
+    public void setDateAdded(Date dateAdded) {
+        mDateAdded = dateAdded;
     }
 
     /*

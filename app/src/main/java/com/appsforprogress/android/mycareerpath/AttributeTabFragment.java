@@ -18,8 +18,10 @@ import android.widget.TextView;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Oswald on 1/16/2016.
@@ -42,8 +44,9 @@ public class AttributeTabFragment<T> extends Fragment
     private String mAttrName;
     private AttributeTabPagerAdapter.AttributeTab mAttrTab;
     private AttributeArrayAdapter mAttrArrayAdapter;
-    private final String fPackageName = "com.appsforprogress.android.mycareerpath";
-    private static Object mAttributeList;
+    private final String fPackageName = "com.appsforprogress.android.mycareerpath.";
+    private T mAttributeList;
+    private static AttributeListController mAttributeListsControl;
     // private ArrayList<T> mAttributes;
 
 
@@ -81,7 +84,7 @@ public class AttributeTabFragment<T> extends Fragment
         // mAttrType = AttributeType.valueOf(args.getString(ARG_ATTR_TYPE));
 
         // Get the Tab we are currently on:
-        mAttrTab = AttributeTabPagerAdapter.AttributeTab.valueOf(args.getString(ARG_ATTR_TAB));
+        //mAttrTab = AttributeTabPagerAdapter.AttributeTab.valueOf(args.getString(ARG_ATTR_TAB));
 
         // Generate a test list of Attributes by the Tab we are currently on -> Replace with DB records
         // final ArrayList<Attribute> attrs = new AttributeTestDataGen(mAttrTab.hashCode()).getTestAttributes(mAttrTab, 20);
@@ -214,16 +217,111 @@ public class AttributeTabFragment<T> extends Fragment
     {
         final Bundle args = getArguments();
 
-        if (args == null) {
+        if (args == null)
+        {
             throw new IllegalStateException("No arguments set; use newInstance when constructing!");
         }
 
-        mAttrName = args.getString(ARG_ATTR_TYPE);
+        mAttrName = args.getString(ARG_ATTR_TAB);
 
         // Get the Tab we are currently on:
         mAttrTab = AttributeTabPagerAdapter.AttributeTab.valueOf(args.getString(ARG_ATTR_TAB));
 
-        mAttributeList = AttributeListController.get(this.getActivity(), mAttrName);
+        // Create the AttributeLists Controller
+        // mAttributeListsControl = new AttributeListController(this.getActivity());
+
+        String className = fPackageName + "SkillList";
+
+        try {
+
+            // Get the Class Object:
+            Class<?> c = Class.forName(className);
+
+            Constructor<?> ct;
+
+            Method[] allMethods = c.getDeclaredMethods();
+
+            Object t = c.newInstance();
+
+            for (Method m : allMethods)
+            {
+                String mname = m.getName();
+
+                if (!mname.equals("get")) //)|| (m.getGenericReturnType() != boolean.class))
+                {
+                    continue;
+                }
+
+                Type[] pType = m.getGenericParameterTypes();
+
+                if ((pType.length != 1) || Locale.class.isAssignableFrom(pType[0].getClass()))
+                {
+                    continue;
+                }
+
+                m.setAccessible(true);
+
+                try
+                {
+                    // Create a new Instance of the Class
+                    Object o = m.invoke(t, this.getActivity());
+
+                    // c.toString() AttrSubList = (c.toString()) o;
+
+                    // Add created Objects to the Hash (Key: Attribute Name, Value: AttributeList Subclass Object)
+                    //mAttributeLists.put(attr, o);
+                }
+                catch (IllegalAccessException ia)
+                {
+                    System.err.println("No access to create an instance of this Class.");
+                    System.exit(0);
+                }
+                catch (InvocationTargetException iv)
+                {
+                    System.err.println("AttributeList: Issue invoking instance of Object.");
+                    System.exit(0);
+                }
+            }
+        }
+        catch (ClassNotFoundException e)
+        {
+            System.err.println("No applicable Class found.");
+            System.exit(0);
+        }
+        catch (java.lang.InstantiationException e)
+        {
+            e.printStackTrace();
+        } catch (IllegalAccessException e)
+        {
+            e.printStackTrace();
+        }
+
+
+        /*+
+
+        try {
+
+            Method m = mAttributeListsControl.getClass().getMethod("getAttributeListsElement");
+
+            try {
+                m.invoke(mAttributeList);
+
+            } catch (IllegalAccessException e) {
+                System.err.println("The method specified does not exist.");
+                System.exit(0);
+            } catch (InvocationTargetException e) {
+                System.err.println("The method specified does not exist.");
+                System.exit(0);
+            }
+
+        }
+        catch (NoSuchMethodException e)
+        {
+
+
+
+        }
+        */
 
         // Class c = mAttributeList.getClass();
 

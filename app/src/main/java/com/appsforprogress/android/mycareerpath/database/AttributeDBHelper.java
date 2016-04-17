@@ -6,6 +6,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.appsforprogress.android.mycareerpath.database.SkillDBSchema.SkillTable;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 /**
  * Created by Oswald on 2/19/2016.
  */
@@ -25,17 +28,43 @@ public class AttributeDBHelper extends SQLiteOpenHelper
     // Create the tables in my Attributes Table:
     public void onCreate(SQLiteDatabase db)
     {
+        Method m;
+        String in = "";
+        String out = "";
         String columns =
-                "O*NET-SOC Code,Element ID,Element Name,Scale ID," +
-                "Scale Name,Data Value,N,Standard Error,Lower CI Bound,Upper CI Bound," +
-                "Recommend Suppress,Not Relevant";
+                "attribute_type,onet_code,element_id,element_name,scale_id,data_value,n_value," +
+                "standard_error,lower_ci_bound,upper_ci_bound,recommend_suppress,not_relevant," +
+                "proficiency,date_added,peer_name";
+
+        /*
+        try
+        {
+            m = SkillTable.Cols.class.getMethod("getColumnsString");
+
+            try
+            {
+                // Attempt to invoke the method found:
+                out = (String) m.invoke(in);
+            }
+            catch (IllegalAccessException ia)
+            {
+                System.err.println("No access to create an instance of this Class.");
+                System.exit(0);
+            }
+            catch (InvocationTargetException iv)
+            {
+                System.err.println("AttributeList: Issue invoking instance of Object.");
+                System.exit(0);
+            }
+        }
+        catch (NoSuchMethodException e)
+        {
+            e.printStackTrace();
+        }
+        */
 
         String skillTableCreate =
-            "create table " + SkillTable.TABLE_NAME +
-            "(" +
-            " _id integer primary key autoincrement, " + columns +
-            ")";
-
+                "create table " + SkillTable.TABLE_NAME + "(" + " _id integer primary key autoincrement, " + columns + ")";
         /*
         String interestTableCreate =
             "create table " + InterestTable.TABLE_NAME +
@@ -63,10 +92,7 @@ public class AttributeDBHelper extends SQLiteOpenHelper
         */
 
         // Called to create DB and Tables if does not already exist:
-        db.execSQL
-        (
-            skillTableCreate
-        );
+        db.execSQL(skillTableCreate);
 
         /*
         db.execSQL

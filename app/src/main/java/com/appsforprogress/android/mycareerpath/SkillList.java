@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,8 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.appsforprogress.android.mycareerpath.database.AttributeDBHelper;
-import com.appsforprogress.android.mycareerpath.database.SkillDBHelper;
 import com.appsforprogress.android.mycareerpath.database.SkillCursorWrapper;
 import com.appsforprogress.android.mycareerpath.database.SkillDBSchema.SkillTable;
 
@@ -45,12 +42,39 @@ public class SkillList extends AttributeList
         return sSkillList;
     }
 
+    public SkillList()
+    {
+
+    }
+
     // Specific Constructor
     private SkillList(Context context)
     {
         String mSkillsFileName = "Skills.csv";
         AssetManager manager = context.getAssets();
+
+        // To get names of all files inside the "Files" folder
+        try
+        {
+            String[] files = manager.list("/assets/");
+
+            for (int i = 0; i < files.length; i++)
+            {
+                System.out.print("File :" + i + " Name => " + files[i]);
+            }
+        }
+        catch (IOException e1)
+        {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+
+
         InputStream inStream = null;
+
+        // ClassLoader classLoader = getClass().getClassLoader();
+        // File file = new File(classLoader.getResource("db-datafiles/Skills.csv").getFile());
+
         try
         {
             inStream = manager.open(mSkillsFileName);

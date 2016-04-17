@@ -109,7 +109,7 @@ public class SkillFragment extends Fragment
         UUID skillId = (UUID) getArguments().getSerializable(ARG_SKILL_ID);
 
         // Get the skill from the SkillList Activity identified
-        mSkill = SkillList.get(getActivity()).getSkill(skillId);
+        mSkill = SkillList.get(getActivity()).selectRecord(skillId);
 
 
     }
@@ -146,7 +146,7 @@ public class SkillFragment extends Fragment
                 Skill remSkill = mSkill;
 
                 // Remove the skill using the SkillList Array remove method:
-                SkillList.get(getActivity()).removeSkill(mSkill);
+                SkillList.get(getActivity()).removeRecord(mSkill);
 
                 // Log.d("REMOVED", "Removed an element from Skill Scroller.", new Exception());
 
@@ -183,7 +183,7 @@ public class SkillFragment extends Fragment
         mTitleField = (EditText) v.findViewById(R.id.skill_title);
 
         // Set the text to the Skill pulled in from the SkillActivity
-        mTitleField.setText(mSkill.getTitle());
+        mTitleField.setText(mSkill.getElementName());
 
         // Add listener to describe what is to be done upon text edit
         mTitleField.addTextChangedListener(new TextWatcher()
@@ -195,7 +195,7 @@ public class SkillFragment extends Fragment
             public void onTextChanged(CharSequence s, int start, int before, int count)
             {
                 // On Text Edit set the title of our Skill Instance to the users input
-                mSkill.setTitle(s.toString());
+                mSkill.setElementName(s.toString());
             }
 
             @Override
@@ -225,7 +225,7 @@ public class SkillFragment extends Fragment
                 FragmentManager manager = getActivity().getSupportFragmentManager();
 
                 // Call the DatePicker Fragments newInstance method by passing in the skill's added date
-                DatePickerFragment dialog = DatePickerFragment.newInstance(mSkill.getAddedDate());
+                DatePickerFragment dialog = DatePickerFragment.newInstance(mSkill.getDateAdded());
 
                 // Set up a connection between the DatePicker and SkillFragment
                 dialog.setTargetFragment(SkillFragment.this, REQUEST_DATE);
@@ -236,12 +236,13 @@ public class SkillFragment extends Fragment
         });
 
         // Set up the Experience CheckBox
-        mExperienceCheckBox = (CheckBox) v.findViewById(R.id.skill_experience);
+        //mExperienceCheckBox = (CheckBox) v.findViewById(R.id.skill_experience);
 
         // Set to the skills value:
-        mExperienceCheckBox.setChecked(mSkill.isExperienced());
+        //mExperienceCheckBox.setChecked(mSkill.isExperienced());
 
         // Set up the listener:
+        /*
         mExperienceCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             @Override
@@ -250,6 +251,7 @@ public class SkillFragment extends Fragment
                 mSkill.setExperienced(isChecked);
             }
         });
+        */
 
         // Set up button to allow user to pick a peer from contacts list
         mPickPeerButton = (Button) v.findViewById(R.id.skill_peer);
@@ -286,7 +288,7 @@ public class SkillFragment extends Fragment
             });
         }
 
-        String peerName = mSkill.getPeer();
+        String peerName = mSkill.getPeerName();
 
         // Set the Peer Pick Button to show the Peer Name if not null
         if (peerName != null)
@@ -348,7 +350,7 @@ public class SkillFragment extends Fragment
         super.onPause();
 
         // Always edits the details of the skill paused on
-        SkillList.get(getActivity()).updateSkill(mSkill);
+        SkillList.get(getActivity()).updateRecord(mSkill);
 
         // Send back Skill Index as an Intent Extra:
         // returnSkillIndexResult();
@@ -389,7 +391,7 @@ public class SkillFragment extends Fragment
             // Process the returned Intent data: Get Date to update the Skill with
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
 
-            mSkill.setAddedDate(date);
+            mSkill.setDateAdded(date);
 
             updateDate();
         }
@@ -421,7 +423,7 @@ public class SkillFragment extends Fragment
                 // and update the Skill and the Button with the contact's name
                 c.moveToFirst();
                 String peerName = c.getString(0);
-                mSkill.setPeer(peerName);
+                mSkill.setPeerName(peerName);
                 mPickPeerButton.setText(peerName);
             }
             finally
@@ -439,13 +441,13 @@ public class SkillFragment extends Fragment
 
     private CharSequence getFormattedDate(String dateFormat)
     {
-        return DateFormat.format(dateFormat, mSkill.getAddedDate());
+        return DateFormat.format(dateFormat, mSkill.getDateAdded());
     }
 
     // Generate the users skill resume => Should encompass all skills
     private String genSkillResume()
     {
-        String peer = mSkill.getPeer();
+        String peer = mSkill.getPeerName();
         String peerStr = null;
         String endorsed = null;
 
@@ -460,7 +462,7 @@ public class SkillFragment extends Fragment
             peerStr = getString(R.string.skill_peer, peer);
 
             // Check if this peer endorsed the skill:
-            if (mSkill.isExperienced())
+            if (mSkill.getProficiency() > 10)
             {
                 endorsed = getString(R.string.skill_endorsed);
             }
@@ -472,7 +474,7 @@ public class SkillFragment extends Fragment
 
         String date = getFormattedDate(shortDateFormat).toString();
 
-        String resume = getString(R.string.skill_resume, mSkill.getTitle(), date, endorsed, peerStr);
+        String resume = getString(R.string.skill_resume, mSkill.getElementName(), date, endorsed, peerStr);
 
         return resume;
 

@@ -21,11 +21,13 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.security.PublicKey;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -44,7 +46,7 @@ public class AttributeListController<T>
     // For Database Usage:
     private Context mContext;
     private SQLiteDatabase mAttributesDatabase;
-    private final String fPackageName = "com.appsforprogress.android.mycareerpath";
+    private final String fPackageName = "com.appsforprogress.android.mycareerpath.";
     private static final String[] fAttributeList =
     {
         "SkillList"
@@ -52,7 +54,7 @@ public class AttributeListController<T>
 
 
     // Specific Constructor to read all Attribute Type Data into the Database:
-    private AttributeListController(Context context)
+    public AttributeListController(Context context)
     {
         // Setup and open a Writable DB:
         mContext = context.getApplicationContext();
@@ -71,23 +73,37 @@ public class AttributeListController<T>
 
                 Constructor<?> ct;
 
-                try {
+                Method[] allMethods = c.getDeclaredMethods();
 
-                    ct = c.getConstructor();
+                Object t = c.newInstance();
 
-                    try {
+                for (Method m : allMethods)
+                {
+                    String mname = m.getName();
+
+                    if (!mname.equals("get")) //)|| (m.getGenericReturnType() != boolean.class))
+                    {
+                        continue;
+                    }
+
+                    Type[] pType = m.getGenericParameterTypes();
+
+                    if ((pType.length != 1) || Locale.class.isAssignableFrom(pType[0].getClass()))
+                    {
+                        continue;
+                    }
+
+                    m.setAccessible(true);
+
+                    try
+                    {
                         // Create a new Instance of the Class
-                        Object o = ct.newInstance();
+                        Object o = m.invoke(t);
 
                         // c.toString() AttrSubList = (c.toString()) o;
 
                         // Add created Objects to the Hash (Key: Attribute Name, Value: AttributeList Subclass Object)
                         mAttributeLists.put(attr, o);
-                    }
-                    catch (InstantiationException is)
-                    {
-                        System.err.println("Cannot create an instance of the Class.");
-                        System.exit(0);
                     }
                     catch (IllegalAccessException ia)
                     {
@@ -100,16 +116,18 @@ public class AttributeListController<T>
                         System.exit(0);
                     }
                 }
-                catch (NoSuchMethodException e)
-                {
-                    System.err.println("No applicable Constructor found.");
-                    System.exit(0);
-                }
             }
             catch (ClassNotFoundException e)
             {
                 System.err.println("No applicable Class found.");
                 System.exit(0);
+            }
+                catch (InstantiationException e)
+                {
+                e.printStackTrace();
+            } catch (IllegalAccessException e)
+                {
+                e.printStackTrace();
             }
         }
 
@@ -120,8 +138,20 @@ public class AttributeListController<T>
 
     }
 
+    public static Hashtable getAttributeLists() {
+        return mAttributeLists;
+    }
+
+    public static <T extends AttributeList> T getAttributeListsElement(String attrName) {
+        return (T) mAttributeLists.get(attrName);
+    }
+
+    public static void setAttributeLists(Hashtable mAttributeLists) {
+        AttributeListController.mAttributeLists = mAttributeLists;
+    }
+
     // get the AttributeList object in use otherwise create a new one:
-    public static <T> T get(Context context, String attrName)
+    public static <T extends AttributeList> T get(Context context, String attrName)
     {
         T out = null;
 

@@ -7,6 +7,7 @@ import java.util.Random;
  */
 public class AttributeTestDataGen
 {
+    /*
     private static final String[] ATTRIBUTE_NAME =
     {
         "Skills", "Abilities", "Interests", "Education, Training, and Experience", "Knowledge"
@@ -54,6 +55,7 @@ public class AttributeTestDataGen
     };
 
 
+    /*
     public Attribute getTestAttribute(AttributeTabPagerAdapter.AttributeTab attrTab, Integer index)
     {
         String attribute = attrTab.toString();
@@ -106,5 +108,6 @@ public class AttributeTestDataGen
     {
         return strings[mRandom.nextInt(strings.length)];
     }
+    */
 
 }

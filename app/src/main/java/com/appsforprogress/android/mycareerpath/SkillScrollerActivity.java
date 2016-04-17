@@ -55,7 +55,7 @@ public class SkillScrollerActivity extends AppCompatActivity
         mViewPager = (ViewPager) findViewById(R.id.activity_skill_scroller_view_pager);
 
         // Get skills data:
-        mSkills = SkillList.get(this).getSkills();
+        mSkills = SkillList.get(this).selectFormattedRecords();
 
         // Get the fragmentManager for this Activity:
         FragmentManager fragmentManager = getSupportFragmentManager();

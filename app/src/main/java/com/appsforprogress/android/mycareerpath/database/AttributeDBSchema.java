@@ -19,6 +19,7 @@ public class AttributeDBSchema
             public static final String ELEMENT_NAME = "element_name";
             public static final String SCALE_ID = "scale_id";
             public static final String DATA_VALUE = "data_value";
+            public static final String DATE_ADDED = "date_added";
         }
     }
 }

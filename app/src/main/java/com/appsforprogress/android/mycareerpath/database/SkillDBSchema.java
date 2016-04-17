@@ -1,5 +1,7 @@
 package com.appsforprogress.android.mycareerpath.database;
 
+import java.lang.reflect.Field;
+
 /**
  * Created by Oswald on 2/18/2016.
  */
@@ -9,7 +11,7 @@ public class SkillDBSchema
     {
         public static final String TABLE_NAME = "skills";
         // Define the Skill Table's columns:
-        public static final class Cols
+        public final class Cols
         {
             public static final String UUID = "uuid";
             public static final String ATTRIBUTE_TYPE = "attribute_type";
@@ -26,6 +28,36 @@ public class SkillDBSchema
             public static final String NOT_RELEVANT = "not_relevant";
             public static final String PROFICIENCY = "proficiency";
             public static final String PEER_NAME = "peer_name";
+            public static final String DATE_ADDED = "date_added";
+
+            public String getColumnsString()
+            {
+                try
+                {
+                    StringBuffer sb = new StringBuffer();
+                    Class<?> objClass = this.getClass();
+
+                    Field[] fields = objClass.getFields();
+
+                    for(Field field : fields)
+                    {
+                        String name = field.getName();
+                        Object value = field.get(this);
+                        sb.append(name + "," + value.toString());
+                    }
+
+                    return sb.toString();
+
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
         }
     }
+
+
 }

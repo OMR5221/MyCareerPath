@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.widget.AdapterView;
+
+import org.w3c.dom.Attr;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,7 +80,7 @@ public class AttributeListFragment<T extends Attribute> extends ListFragment imp
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
     {
-        final Attribute attr = mAttrArrayAdapter.getItem(position);
+        final T attr = (T) mAttrArrayAdapter.getItem(position);
         AttributeDetailActivity.startActivity(getActivity(), attr);
     }
 }
