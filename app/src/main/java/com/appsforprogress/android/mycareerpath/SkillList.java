@@ -5,14 +5,19 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.jar.JarEntry;
 
 import com.appsforprogress.android.mycareerpath.database.SkillCursorWrapper;
 import com.appsforprogress.android.mycareerpath.database.SkillDBSchema.SkillTable;
@@ -53,10 +58,56 @@ public class SkillList extends AttributeList
         String mSkillsFileName = "Skills.csv";
         AssetManager manager = context.getAssets();
 
+        // Get Dirs for files:
+        File fileDir = context.getFilesDir();
+
+        String strNewFileName = "Skills.csv";
+        String strFileContents = "Write to the Skills file.";
+
+        File newFile = new File(fileDir, strNewFileName);
+
+        try
+        {
+            newFile.createNewFile();
+        }
+        catch (IOException e)
+        {
+            System.out.print("File IO Error encountered.");
+        }
+
+        try {
+            FileOutputStream fo = new FileOutputStream(newFile.getAbsolutePath());
+
+            try
+            {
+                fo.write(strFileContents.getBytes());
+
+                fo.close();
+            }
+            catch (IOException e)
+            {
+                System.out.print("File IO Error encountered.");
+            }
+
+        }
+        catch (FileNotFoundException e)
+        {
+            System.out.print("File Not Found Error encountered.");
+        }
+
+
+
+        String[] fileList = fileDir.list();
+
+        for (int i = 0; i < fileList.length; i++)
+        {
+            System.out.print("File :" + i + " Name => " + fileList[i]);
+        }
+
         // To get names of all files inside the "Files" folder
         try
         {
-            String[] files = manager.list("/assets/");
+            String[] files = manager.list("");
 
             for (int i = 0; i < files.length; i++)
             {
