@@ -13,10 +13,10 @@ import java.util.UUID;
 public class Skill extends Attribute
 {
     // DB Specific Fields:
-    private Integer mN;
-    private Float mStandardError;
-    private Float mLowerCIBound;
-    private Float mUpperCIBound;
+    private String mN;
+    private String mStandardError;
+    private String mLowerCIBound;
+    private String mUpperCIBound;
     private String mRecommendSuppressStr;
     private Boolean mRecommendSuppressBool;
     private String mNotRelevantStr; // Should be converted into a boolean
@@ -34,36 +34,36 @@ public class Skill extends Attribute
     }
 
     // Getter and setters:
-    public Integer getN()
+    public String getN()
     {
         return mN;
     }
 
-    public void setN(Integer n) {
+    public void setN(String n) {
         mN = n;
     }
 
-    public Float getStandardError() {
+    public String getStandardError() {
         return mStandardError;
     }
 
-    public void setStandardError(Float standardError) {
+    public void setStandardError(String standardError) {
         mStandardError = standardError;
     }
 
-    public Float getLowerCIBound() {
+    public String getLowerCIBound() {
         return mLowerCIBound;
     }
 
-    public void setLowerCIBound(Float lowerCIBound) {
+    public void setLowerCIBound(String lowerCIBound) {
         mLowerCIBound = lowerCIBound;
     }
 
-    public Float getUpperCIBound() {
+    public String getUpperCIBound() {
         return mUpperCIBound;
     }
 
-    public void setUpperCIBound(Float upperCIBound) {
+    public void setUpperCIBound(String upperCIBound) {
         mUpperCIBound = upperCIBound;
     }
 

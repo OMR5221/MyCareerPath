@@ -15,12 +15,12 @@ import android.widget.TextView;
 public class AttributeDetailActivity extends AppCompatActivity
 {
 
-    private static final String EXTRA_ATTRIBUTE = "com.appsforprogress.android.mycareerpath.ATTRIBUTE";
+    private static final String EXTRA_ELEMENT_ID = "com.appsforprogress.android.mycareerpath.ATTRIBUTE";
 
     public static void startActivity(Context context, Attribute attr)
     {
         final Intent intent = new Intent(context, AttributeDetailActivity.class);
-        intent.putExtra(EXTRA_ATTRIBUTE, attr.getAttributeType());
+        intent.putExtra(EXTRA_ELEMENT_ID, attr.getElementId());
         context.startActivity(intent);
     }
 
@@ -34,14 +34,14 @@ public class AttributeDetailActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        final Attribute attr = getIntent().getParcelableExtra(EXTRA_ATTRIBUTE);
+        final Attribute attr = getIntent().getParcelableExtra(EXTRA_ELEMENT_ID);
 
         if (attr == null)
         {
             throw new IllegalStateException("Tool not available as extra; use startActivity when creating an activity instance");
         }
 
-        findAndSetTextView(R.id.detail_attribute_name, attr.getAttributeType());
+        //findAndSetTextView(R.id.detail_attribute_name, attr.);
         //findAndSetTextView(R.id.detail_career_name, attr.);
         findAndSetTextView(R.id.detail_element_name, attr.getElementName());
         //findAndSetTextView(R.id.detail_0, tool.getDetails()[0]);

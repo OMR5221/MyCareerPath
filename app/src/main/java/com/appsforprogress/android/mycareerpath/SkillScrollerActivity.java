@@ -91,6 +91,7 @@ public class SkillScrollerActivity extends AppCompatActivity
             if (mSkills.get(i).getId().equals(skillId))
             {
                 mViewPager.setCurrentItem(i);
+
                 break;
             }
         }

@@ -35,7 +35,7 @@ public abstract class AttributeList<A>
     //public abstract <T> T get(Context context);
 
     // Use the CursorWrapper to retrieve properly formed database record values
-    public abstract <C extends AttributeCursorWrapper> C selectRawRecords(String whereClause, String[] whereArgs);
+    public abstract <C> C selectRawRecords(String whereClause, String[] whereArgs);
 
     // Getter for skills List
     public abstract List<A> selectFormattedRecords();
@@ -43,9 +43,7 @@ public abstract class AttributeList<A>
     // getter to return a single skill from mSkills
     public abstract <A extends Attribute> A selectRecord(UUID id);
 
-    public abstract ContentValues getContentValues(A attr);
-
-    public abstract void insertRecord(A attr);
+    // public abstract void insertRecord(A attr);
 
     public abstract void removeRecord(A attr);
 

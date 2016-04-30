@@ -1,5 +1,6 @@
 package com.appsforprogress.android.mycareerpath;
 
+import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.jar.JarEntry;
 
+import com.appsforprogress.android.mycareerpath.database.AttributeDBHelper;
 import com.appsforprogress.android.mycareerpath.database.SkillCursorWrapper;
 import com.appsforprogress.android.mycareerpath.database.SkillDBSchema.SkillTable;
 
@@ -55,12 +57,16 @@ public class SkillList extends AttributeList
     // Specific Constructor
     private SkillList(Context context)
     {
+        mContext = context.getApplicationContext();
+
+        mAttributesDatabase = new AttributeDBHelper(mContext).getWritableDatabase();
+
         String mSkillsFileName = "Skills.csv";
         AssetManager manager = context.getAssets();
 
         // Get Dirs for files:
         File fileDir = context.getFilesDir();
-
+        /*
         String strNewFileName = "Skills.csv";
         String strFileContents = "Write to the Skills file.";
 
@@ -135,11 +141,15 @@ public class SkillList extends AttributeList
             e.printStackTrace();
         }
 
-        BufferedReader buffer = new BufferedReader(new InputStreamReader(inStream));
-
+        BufferedReader bufferReader = new BufferedReader(new InputStreamReader(inStream));
+        */
         Integer lineNum = 0;
         Integer numColumns = 0;
+        String dbColHeaders[] = null;
+        String row[] = null;
 
+        /*
+        String dbCol = "";
         String dbCol0 = "";
         String dbCol1 = "";
         String dbCol2 = "";
@@ -155,11 +165,141 @@ public class SkillList extends AttributeList
         String dbCol12 = "";
         String dbCol13 = "";
         String dbCol14 = "";
+        */
 
-        String line;
+        InputStream inStream = null;
+
+        try {
+            inStream = manager.open(mSkillsFileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));
+
+        mAttributesDatabase.delete(SkillTable.TABLE_NAME, null, null);
 
         mAttributesDatabase.beginTransaction();
 
+        try
+        {
+            //reader = new BufferedReader(new InputStreamReader(context.getAssets().open(mSkillsFileName)));
+
+
+            // do reading, usually loop until end of file reading
+            String line;
+
+            //while ((line = reader.readLine()) != null)
+            while (lineNum <= 50)
+            {
+                line = reader.readLine();
+
+                if (lineNum == 0)
+                {
+                    // Get Column Headers:
+                    dbColHeaders = line.split(",");
+
+                    numColumns = dbColHeaders.length;
+
+                    lineNum += 1;
+
+                    /*
+                    dbCol0 = columns[0].trim();
+                    dbCol1 = columns[1].trim();
+                    dbCol2 = columns[2].trim();
+                    dbCol3 = columns[3].trim();
+                    dbCol4 = columns[4].trim();
+                    dbCol5 = columns[5].trim();
+                    dbCol6 = columns[6].trim();
+                    dbCol7 = columns[7].trim();
+                    dbCol8 = columns[8].trim();
+                    dbCol9 = columns[9].trim();
+                    dbCol10 = columns[10].trim();
+                    dbCol11 = columns[11].trim();
+                    dbCol12 = columns[12].trim();
+                    dbCol13 = columns[13].trim();
+                    dbCol14 = columns[14].trim();
+                    */
+                }
+                else
+                {
+                    row = line.split(",");
+
+                    Skill newSkill = new Skill();
+
+                    // Add a new Skill to the SkillList object
+                    // this.insertRecord(newSkill);
+
+                    // Create a new db record entry:
+                    ContentValues values = new ContentValues(15);
+
+                    values.put(SkillTable.Cols.UUID, newSkill.getId().toString());
+
+                    /*
+                    if (columns.length != 14)
+                    {
+                        Log.d("CSVParser" , "Skipping Bad CSV Row");
+                        continue;
+                    }
+                    */
+
+                    for (int j = 0; j < numColumns; j++)
+                    {
+                        values.put(dbColHeaders[j], row[j].trim());
+                    }
+
+
+                    lineNum += 1;
+
+                    // Insert formatted raw record into the DB:try
+                    try {
+                        mAttributesDatabase.insertOrThrow(SkillTable.TABLE_NAME, null, values);
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            mAttributesDatabase.setTransactionSuccessful();
+            mAttributesDatabase.endTransaction();
+
+            /*
+            List<Skill> skills = this.selectFormattedRecords();
+
+            Integer skillCount = skills.size();
+
+            for (int i = 0; i < skillCount; i++)
+            {
+                System.out.println(skills.get(i));
+            }
+            */
+        }
+        catch (IOException e)
+        {
+            //log the exception
+            e.printStackTrace();
+        }
+        finally
+        {
+            if (reader != null)
+            {
+                try
+                {
+                    reader.close();
+                }
+                catch (IOException e)
+                {
+                    //log the exception
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        /*
         try
         {
             while ((line = buffer.readLine()) != null)
@@ -174,7 +314,7 @@ public class SkillList extends AttributeList
                     Log.d("CSVParser", "Skipping Bad CSV Row");
                     continue;
                 }
-                */
+
                 // Header Line: Get column names
                 if (lineNum == 0)
                 {
@@ -266,7 +406,8 @@ public class SkillList extends AttributeList
         List<Skill> skills = new ArrayList<>();
 
         // Use custom cursor to retrieve rows
-        SkillCursorWrapper cursor = this.selectRawRecords(null, null);
+        SkillCursorWrapper cursor =
+                selectRawRecords(null, null);
 
         try
         {
@@ -275,7 +416,7 @@ public class SkillList extends AttributeList
             while (!cursor.isAfterLast())
             {
                 // Format the retrieved skill row
-                skills.add(cursor.getSkillRecord());
+                skills.add(cursor.getSkill());
                 cursor.moveToNext();
             }
         }
@@ -287,18 +428,26 @@ public class SkillList extends AttributeList
         return skills;
     }
 
-    @Override
-    public ContentValues getContentValues(Object attr)
+    private static ContentValues getContentValues(Skill skill)
     {
-        Skill skill = (Skill) attr;
-
         ContentValues values = new ContentValues();
 
         values.put(SkillTable.Cols.UUID, skill.getId().toString());
+        values.put(SkillTable.Cols.CAREER_NAME, skill.getCareerName());
+        values.put(SkillTable.Cols.ONET_CODE, skill.getONetCode());
+        values.put(SkillTable.Cols.ELEMENT_ID, skill.getElementId());
         values.put(SkillTable.Cols.ELEMENT_NAME, skill.getElementName());
-        // values.put(SkillTable.Cols.DATE, skill.getAddedDate().getTime());
-        // values.put(SkillTable.Cols.EXPERIENCE, skill.isExperienced() ? 1 : 0);
+        values.put(SkillTable.Cols.SCALE_ID, skill.getScaleId());
+        values.put(SkillTable.Cols.DATA_VALUE, skill.getDataValue());
+        values.put(SkillTable.Cols.N_VALUE, skill.getN());
+        values.put(SkillTable.Cols.STANDARD_ERROR, skill.getStandardError());
+        values.put(SkillTable.Cols.LOWER_CI_BOUND, skill.getLowerCIBound());
+        values.put(SkillTable.Cols.UPPER_CI_BOUND, skill.getUpperCIBound());
+        values.put(SkillTable.Cols.RECOMMEND_SUPPRESS, skill.getRecommendSuppressStr());
+        values.put(SkillTable.Cols.NOT_RELEVANT, skill.getNotRelevantStr());
+        values.put(SkillTable.Cols.PROFICIENCY, skill.getProficiency());
         values.put(SkillTable.Cols.PEER_NAME, skill.getPeerName());
+        values.put(SkillTable.Cols.DATE_ADDED, skill.getDateAdded());
 
         return values;
     }
@@ -335,7 +484,7 @@ public class SkillList extends AttributeList
             cursor.moveToFirst();
 
             // Return the requested Skill row formatted
-            return cursor.getSkillRecord();
+            return cursor.getSkill();
 
         }
 
@@ -346,9 +495,9 @@ public class SkillList extends AttributeList
 
     }
 
-    public void insertRecord(Object o)
+    public void insertRecord(Skill skill)
     {
-        Skill skill = (Skill) o;
+        // Skill skill = (Skill) o;
         // mSkills.add(newSkill);
 
         // Add new ContentValue to the DB:

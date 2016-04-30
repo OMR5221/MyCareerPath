@@ -33,7 +33,6 @@
                 android:value="com.appsforprogress.android.mycareerpath.MainMenuActivity" />
         </activity>
 
-        <!--
         <activity android:name=".SkillListActivity">
         </activity>
 
@@ -45,6 +44,5 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
         </activity>
-        -->
     </application>
 </manifest>

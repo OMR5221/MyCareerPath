@@ -126,7 +126,7 @@ public class AttributeArrayAdapter<T extends Attribute> extends ArrayAdapter
 
         // Set TextViews
         mAttributeNameTextView = (TextView) convertView.findViewById(R.id.attribute_name);
-        mAttributeNameTextView.setText(attr.getAttributeType());
+        mAttributeNameTextView.setText(attr.getCareerName());
 
         //mCareerNameTextView = (TextView) convertView.findViewById(R.id.career_name);
         //mCareerNameTextView.setText(attr);

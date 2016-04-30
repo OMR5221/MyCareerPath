@@ -15,7 +15,7 @@ import java.util.UUID;
 
 // Wrap custom methods around a Cursor to alter Database query records
 // to cast the data palled out of the Database into Java compatible data types
-public class SkillCursorWrapper extends AttributeCursorWrapper
+public class SkillCursorWrapper extends CursorWrapper
 {
 
     /**
@@ -29,23 +29,41 @@ public class SkillCursorWrapper extends AttributeCursorWrapper
     }
 
     // READ values from columns in our DB:
-    public Skill getSkillRecord()
+    public Skill getSkill()
     {
-        super.getAttributeRecord();
+        // super.getAttributeRecord();
 
         // Retrieve Database record and cast to Java data types
-        int n = getInt(getColumnIndex(SkillTable.Cols.N_VALUE));
-        Float stdError = getFloat(getColumnIndex(SkillTable.Cols.STANDARD_ERROR));
-        Float lowCIBound = getFloat(getColumnIndex(SkillTable.Cols.LOWER_CI_BOUND));
-        Float upCIBound = getFloat(getColumnIndex(SkillTable.Cols.UPPER_CI_BOUND));
+        // Retrieve Database record and cast to Java data types
+        String uuidString = getString(getColumnIndex(SkillTable.Cols.UUID));
+        String oNetCode = getString(getColumnIndex(SkillTable.Cols.ONET_CODE));
+        String careerName = getString(getColumnIndex(SkillTable.Cols.CAREER_NAME));
+        String elementId = getString(getColumnIndex(SkillTable.Cols.ELEMENT_ID));
+        String elementName = getString(getColumnIndex(SkillTable.Cols.ELEMENT_NAME));
+        String scaleId = getString(getColumnIndex(SkillTable.Cols.SCALE_ID));
+        String scaleName = getString(getColumnIndex(SkillTable.Cols.SCALE_NAME));
+        String dataValue = getString(getColumnIndex(SkillTable.Cols.DATA_VALUE));
+        String dateAdded = getString(getColumnIndex(SkillTable.Cols.DATE_ADDED));
+        String n = getString(getColumnIndex(SkillTable.Cols.N_VALUE));
+        String stdError = getString(getColumnIndex(SkillTable.Cols.STANDARD_ERROR));
+        String lowCIBound = getString(getColumnIndex(SkillTable.Cols.LOWER_CI_BOUND));
+        String upCIBound = getString(getColumnIndex(SkillTable.Cols.UPPER_CI_BOUND));
         String recSuppress = getString(getColumnIndex(SkillTable.Cols.RECOMMEND_SUPPRESS));
         String notRelevant = getString(getColumnIndex(SkillTable.Cols.NOT_RELEVANT));
-        // long date = getLong(getColumnIndex(SkillTable.Cols.DATE));
         String peerName = getString(getColumnIndex(SkillTable.Cols.PEER_NAME));
         Integer proficiency = getInt(getColumnIndex(SkillTable.Cols.PROFICIENCY));
 
         // Create a new Skill and assign values retrieved from the Database for display in SkillFragment
         Skill skill = new Skill();
+
+        skill.setONetCode(oNetCode);
+        skill.setONetCode(careerName);
+        skill.setElementId(elementId);
+        skill.setElementName(elementName);
+        skill.setScaleId(scaleId);
+        skill.setScaleName(scaleName);
+        skill.setDataValue(dataValue);
+        skill.setDateAdded(dateAdded);
         skill.setN(n);
         skill.setStandardError(stdError);
         skill.setLowerCIBound(lowCIBound);
@@ -54,7 +72,7 @@ public class SkillCursorWrapper extends AttributeCursorWrapper
         skill.setNotRelevantStr(notRelevant);
         skill.setPeerName(peerName);
         skill.setProficiency(proficiency);
-        // skill.setAddedDate(new Date(date));
+        // skill.setDateAdded(new Date(dateAdded));
         // skill.setExperienced(hasExperience != 0);
 
         return skill;

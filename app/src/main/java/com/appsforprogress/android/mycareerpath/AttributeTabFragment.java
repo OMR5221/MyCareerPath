@@ -3,6 +3,7 @@ package com.appsforprogress.android.mycareerpath;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,17 +42,19 @@ public class AttributeTabFragment<T> extends Fragment
     private Integer mAttributeCount;
     private static final String ARG_ATTR_TYPE = "attrType";
     private static final String ARG_ATTR_TAB = "attrTab";
+    private static final String ARG_TAB_POSITION_KEY = "attrPosition";
     private String mAttrName;
     private AttributeTabPagerAdapter.AttributeTab mAttrTab;
-    private AttributeArrayAdapter mAttrArrayAdapter;
+    // private AttributeArrayAdapter mAttrArrayAdapter;
     private final String fPackageName = "com.appsforprogress.android.mycareerpath.";
-    private T mAttributeList;
+    private Object mAttributeList;
     private static AttributeListController mAttributeListsControl;
+    public static TabLayout tabLayout;
     // private ArrayList<T> mAttributes;
 
 
     // Create a new Fragment with the AttributeType in the Tab Object to be created.
-    public static AttributeTabFragment newInstance(AttributeTabPagerAdapter.AttributeTab attrTab)
+    public static AttributeTabFragment newInstance(AttributeTabPagerAdapter.AttributeTab attrTab, int position)
     {
         final AttributeTabFragment fragment = new AttributeTabFragment();
         final Bundle args = new Bundle();
@@ -59,6 +62,7 @@ public class AttributeTabFragment<T> extends Fragment
 
         // Set the tab passed into the List as an argument when creating the object:
         args.putString(ARG_ATTR_TAB, attrTab.name());
+        args.putInt(ARG_TAB_POSITION_KEY, position);
         fragment.setArguments(args);
         return fragment;
     }
@@ -231,6 +235,7 @@ public class AttributeTabFragment<T> extends Fragment
         // mAttributeListsControl = new AttributeListController(this.getActivity());
 
         String className = fPackageName + "SkillList";
+        Object attributeListObject = null;
 
         try {
 
@@ -264,7 +269,7 @@ public class AttributeTabFragment<T> extends Fragment
                 try
                 {
                     // Create a new Instance of the Class
-                    Object o = m.invoke(t, this.getActivity());
+                    attributeListObject = m.invoke(t, this.getActivity());
 
                     // c.toString() AttrSubList = (c.toString()) o;
 
@@ -324,18 +329,17 @@ public class AttributeTabFragment<T> extends Fragment
         */
 
         // Class c = mAttributeList.getClass();
-
+        // T attributeList = null;
         List<? extends Attribute> attributes = null;
 
         // Get reference to our AttributeList using the AttributeListController:
         switch (mAttrName)
         {
-            case "SKILL":
-
+            case "SKILLS":
+                mAttributeList = (SkillList) attributeListObject;
                 attributes =  new ArrayList<Skill>();
 
             case "ATTRIBUTE":
-
                 attributes = new ArrayList<Attribute>();
 
         }
@@ -346,7 +350,7 @@ public class AttributeTabFragment<T> extends Fragment
             Method m = mAttributeList.getClass().getMethod("selectFormattedRecords");
 
             try {
-                m.invoke(attributes);
+                attributes = (ArrayList<Skill>) m.invoke(mAttributeList);
             } catch (IllegalAccessException e) {
                 System.err.println("The method specified does not exist.");
                 System.exit(0);
@@ -366,13 +370,12 @@ public class AttributeTabFragment<T> extends Fragment
             mAttributeRecyclerView.setVisibility(View.GONE);
             mNoAttributeTextView.setVisibility(View.VISIBLE);
         }
-
-        else {
+        else
+        {
 
             // Set up the adapter if it is not already in place:
             if (mAdapter == null)
             {
-
                 // Create an adapter and pass the List of skills for it to manage
                 mAdapter = new AttributeAdapter(attributes);
 
@@ -380,7 +383,6 @@ public class AttributeTabFragment<T> extends Fragment
                 mAttributeRecyclerView.setAdapter(mAdapter);
 
             }
-
             else {
 
                 // Give the Adapter the latest skills List
@@ -581,7 +583,7 @@ public class AttributeTabFragment<T> extends Fragment
                     SkillHolder skillHolder = (SkillHolder) viewHolder;
 
                     // Place the text in the TextView held by the holder to the skill object's Title
-                    skillHolder.mLowerCIBoundTextView.setText(R.string.no_skills);
+                    // skillHolder.mLowerCIBoundTextView.setText(R.string.no_skills);
 
                     skillHolder.bindAttribute(skill);
 
@@ -685,14 +687,12 @@ public class AttributeTabFragment<T> extends Fragment
     {
         private Skill mSkill;
 
-        private TextView mLowerCIBoundTextView;
-
         public SkillHolder(View itemView)
         {
             super(itemView);
 
             // Create a TextView to Skill specific fields:
-            mLowerCIBoundTextView = (TextView) itemView.findViewById(R.id.no_skills_text_view);
+            super.mElementNameTextView = (TextView) itemView.findViewById(R.id.no_skills_text_view);
         }
 
         public <T> void bindAttribute(T attr)
@@ -701,11 +701,12 @@ public class AttributeTabFragment<T> extends Fragment
 
             String outText = null;
 
-            outText = callMethod("getElementName", attr, String.class);
+            // Invoke the Attribute's method to get values to be displayed:
+            outText = mSkill.getElementName();
 
-            mLowerCIBoundTextView = (TextView) itemView.findViewById(R.id.list_item_skill_title_text_view);
+            super.mElementNameTextView  = (TextView) itemView.findViewById(R.id.list_item_skill_title_text_view);
 
-            mLowerCIBoundTextView.setText(outText);
+            super.mElementNameTextView.setText(outText);
         }
 
         @Override

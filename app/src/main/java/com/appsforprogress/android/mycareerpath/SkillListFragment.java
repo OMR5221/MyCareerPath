@@ -342,7 +342,6 @@ public class SkillListFragment extends Fragment
 
                     // Place the text in the TextView held by the holder to the skill object's Title
                     skillHolder.bindSkill(skill);
-
             }
         }
 

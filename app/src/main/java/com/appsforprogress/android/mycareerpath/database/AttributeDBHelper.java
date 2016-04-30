@@ -17,7 +17,7 @@ public class AttributeDBHelper extends SQLiteOpenHelper
 
     private static final Integer VERSION = 1;
     private static final String DATABASE_NAME = "attributes.db";
-
+    private static String mColumns;
 
     public AttributeDBHelper(Context context)
     {
@@ -28,13 +28,6 @@ public class AttributeDBHelper extends SQLiteOpenHelper
     // Create the tables in my Attributes Table:
     public void onCreate(SQLiteDatabase db)
     {
-        Method m;
-        String in = "";
-        String out = "";
-        String columns =
-                "attribute_type,onet_code,element_id,element_name,scale_id,data_value,n_value," +
-                "standard_error,lower_ci_bound,upper_ci_bound,recommend_suppress,not_relevant," +
-                "proficiency,date_added,peer_name";
 
         /*
         try
@@ -64,7 +57,26 @@ public class AttributeDBHelper extends SQLiteOpenHelper
         */
 
         String skillTableCreate =
-                "create table " + SkillTable.TABLE_NAME + "(" + " _id integer primary key autoincrement, " + columns + ")";
+                "create table " + SkillTable.TABLE_NAME +
+                        "(" + " _id integer primary key autoincrement, " +
+                        SkillTable.Cols.UUID + ", " +
+                        SkillTable.Cols.CAREER_NAME + ", " +
+                        SkillTable.Cols.ONET_CODE + ", " +
+                        SkillTable.Cols.ELEMENT_ID + ", " +
+                        SkillTable.Cols.ELEMENT_NAME + ", " +
+                        SkillTable.Cols.SCALE_ID + ", " +
+                        SkillTable.Cols.SCALE_NAME + ", " +
+                        SkillTable.Cols.DATA_VALUE + ", " +
+                        SkillTable.Cols.N_VALUE + ", " +
+                        SkillTable.Cols.STANDARD_ERROR + ", " +
+                        SkillTable.Cols.LOWER_CI_BOUND + ", " +
+                        SkillTable.Cols.UPPER_CI_BOUND + ", " +
+                        SkillTable.Cols.RECOMMEND_SUPPRESS + ", " +
+                        SkillTable.Cols.NOT_RELEVANT + ", " +
+                        SkillTable.Cols.PROFICIENCY + ", " +
+                        SkillTable.Cols.PEER_NAME + ", " +
+                        SkillTable.Cols.DATE_ADDED +
+                        ")";
         /*
         String interestTableCreate =
             "create table " + InterestTable.TABLE_NAME +
@@ -116,6 +128,11 @@ public class AttributeDBHelper extends SQLiteOpenHelper
             knowledgeTableCreate
         );
         */
+    }
+
+    public int getNumColumns()
+    {
+        return mColumns.length();
     }
 
     @Override

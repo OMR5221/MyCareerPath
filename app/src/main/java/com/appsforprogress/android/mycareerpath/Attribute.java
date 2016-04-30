@@ -13,13 +13,14 @@ public class Attribute //implements Parcelable
 {
     // Define the fields for Skill Model
     private UUID mId;
-    private String mAttributeType;
+    private String mCareerName;
     private String mONetCode;
     private String mElementId;
     private String mElementName;
     private String mScaleId;
-    private Float mDataValue;
-    private Date mDateAdded;
+    private String mScaleName;
+    private String mDataValue;
+    private String mDateAdded;
 
 
     public Attribute(String attrType)
@@ -39,14 +40,14 @@ public class Attribute //implements Parcelable
         return mId;
     }
 
-    public String getAttributeType()
+    public String getCareerName()
     {
-        return mAttributeType;
+        return mCareerName;
     }
 
-    public void setAttributeType(String attributeType)
+    public void setCareerName(String career)
     {
-        mAttributeType = attributeType;
+        mCareerName = career;
     }
 
     public String getONetCode() {
@@ -65,11 +66,11 @@ public class Attribute //implements Parcelable
         return mScaleId;
     }
 
-    public Float getDataValue() {
+    public String getDataValue() {
         return mDataValue;
     }
 
-    public Date getDateAdded() {
+    public String getDateAdded() {
         return mDateAdded;
     }
 
@@ -89,12 +90,20 @@ public class Attribute //implements Parcelable
         mScaleId = scaleId;
     }
 
-    public void setDataValue(Float dataValue) {
+    public void setDataValue(String dataValue) {
         mDataValue = dataValue;
     }
 
-    public void setDateAdded(Date dateAdded) {
+    public void setDateAdded(String dateAdded) {
         mDateAdded = dateAdded;
+    }
+
+    public String getScaleName() {
+        return mScaleName;
+    }
+
+    public void setScaleName(String scaleName) {
+        mScaleName = scaleName;
     }
 
     /*

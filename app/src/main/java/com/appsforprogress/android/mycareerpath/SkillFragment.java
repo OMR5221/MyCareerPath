@@ -210,11 +210,12 @@ public class SkillFragment extends Fragment
         // Set the text to Skill instance AddedDate field
         // mAddedDateButton.setText(dateFormat.format(mSkill.getAddedDate()));
         // mAddedDateButton.setText(android.text.format.DateFormat.format(formatStr, mSkill.getAddedDate()));
-        updateDate();
+        //updateDate();
 
         // Disable the button from being altered for now:
         // mAddedDateButton.setEnabled(false);
 
+        /*
         // Enable the onClickListener for the dateButton to create our DatePickerFragment
         mAddedDateButton.setOnClickListener(new View.OnClickListener()
         {
@@ -225,7 +226,7 @@ public class SkillFragment extends Fragment
                 FragmentManager manager = getActivity().getSupportFragmentManager();
 
                 // Call the DatePicker Fragments newInstance method by passing in the skill's added date
-                DatePickerFragment dialog = DatePickerFragment.newInstance(mSkill.getDateAdded());
+                //DatePickerFragment dialog = DatePickerFragment.newInstance(mSkill.getDateAdded());
 
                 // Set up a connection between the DatePicker and SkillFragment
                 dialog.setTargetFragment(SkillFragment.this, REQUEST_DATE);
@@ -234,6 +235,7 @@ public class SkillFragment extends Fragment
                 dialog.show(manager, DIALOG_DATE);
             }
         });
+        */
 
         // Set up the Experience CheckBox
         //mExperienceCheckBox = (CheckBox) v.findViewById(R.id.skill_experience);
@@ -325,7 +327,7 @@ public class SkillFragment extends Fragment
 
                 ib.setType("text/plain");
 
-                ib.setText(genSkillResume());
+                //ib.setText(genSkillResume());
 
                 ib.setSubject(getString(R.string.skill_resume_subject));
 
@@ -391,9 +393,9 @@ public class SkillFragment extends Fragment
             // Process the returned Intent data: Get Date to update the Skill with
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
 
-            mSkill.setDateAdded(date);
+            //mSkill.setDateAdded(date);
 
-            updateDate();
+            //updateDate();
         }
         // Handle the results for the return of the users Contact pick
         else if (requestCode == REQUEST_CONTACT && data != null)
@@ -434,17 +436,20 @@ public class SkillFragment extends Fragment
     }
 
 
-    private void updateDate()
+    /* private void updateDate()
     {
         mAddedDateButton.setText(getFormattedDate(longDateFormat));
     }
+    */
 
+    /*
     private CharSequence getFormattedDate(String dateFormat)
     {
         return DateFormat.format(dateFormat, mSkill.getDateAdded());
     }
+    */
 
-    // Generate the users skill resume => Should encompass all skills
+    /* Generate the users skill resume => Should encompass all skills
     private String genSkillResume()
     {
         String peer = mSkill.getPeerName();
@@ -472,13 +477,14 @@ public class SkillFragment extends Fragment
             }
         }
 
-        String date = getFormattedDate(shortDateFormat).toString();
+        //String date = getFormattedDate(shortDateFormat).toString();
 
-        String resume = getString(R.string.skill_resume, mSkill.getElementName(), date, endorsed, peerStr);
+        //String resume = getString(R.string.skill_resume, mSkill.getElementName(), date, endorsed, peerStr);
 
         return resume;
 
     }
+    */
 
 
 }
