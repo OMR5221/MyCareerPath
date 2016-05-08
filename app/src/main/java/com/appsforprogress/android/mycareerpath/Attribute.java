@@ -23,7 +23,7 @@ public class Attribute //implements Parcelable
     private String mDateAdded;
 
 
-    public Attribute(String attrType)
+    public Attribute()
     {
         // Call the secondary constructor below with a random UUID:
         this(UUID.randomUUID());

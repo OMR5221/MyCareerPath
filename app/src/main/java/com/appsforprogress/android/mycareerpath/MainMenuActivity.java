@@ -1,5 +1,7 @@
 package com.appsforprogress.android.mycareerpath;
 
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -12,6 +14,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.appsforprogress.android.mycareerpath.database.AttributeDBHelper;
 
 /**
  * Created by Oswald on 3/12/2016.
@@ -27,6 +31,10 @@ public class MainMenuActivity extends AppCompatActivity implements NavigationVie
 
     private Toolbar mMainMenuToolbar;
     private MainMenuOption[] mMainMenuOptions = MainMenuOption.values();
+
+    // For Database Usage:
+    private Context mContext;
+    private SQLiteDatabase mAttributesDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -56,6 +64,8 @@ public class MainMenuActivity extends AppCompatActivity implements NavigationVie
         // Add Drawer Listener
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
         mNavigationView.setNavigationItemSelectedListener(this);
+
+        mContext = getApplicationContext();
 
         /*
         // Set up tabs and their titles
@@ -136,6 +146,11 @@ public class MainMenuActivity extends AppCompatActivity implements NavigationVie
 
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
+        // Want to create DB here:
+        // Create the db and its empty tables and load data into tables
+        mAttributesDatabase = new AttributeDBHelper(mContext).getWritableDatabase();
+
+        // Fill each DB table and create Attribute Lists per Type
         final AttributeTabPagerAdapter attrPagerAdapter = new AttributeTabPagerAdapter(getSupportFragmentManager(), getResources()); // ,mMainMenuOptions[position]
 
         tabLayout.removeAllTabs();

@@ -30,7 +30,7 @@ public class Skill extends Attribute
     // Define default Constructor:
     public Skill()
     {
-        super("Skill");
+        super();
     }
 
     // Getter and setters:

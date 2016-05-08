@@ -40,9 +40,8 @@ public class AttributeTabFragment<T> extends Fragment
     private Integer mPriorCount;
     private Integer mCurrentCount;
     private Integer mAttributeCount;
-    private static final String ARG_ATTR_TYPE = "attrType";
-    private static final String ARG_ATTR_TAB = "attrTab";
-    private static final String ARG_TAB_POSITION_KEY = "attrPosition";
+    private static final String ARG_ATTR_NAME = "attrName";
+    private static final String ARG_TAB_POSITION = "attrPosition";
     private String mAttrName;
     private AttributeTabPagerAdapter.AttributeTab mAttrTab;
     // private AttributeArrayAdapter mAttrArrayAdapter;
@@ -58,11 +57,11 @@ public class AttributeTabFragment<T> extends Fragment
     {
         final AttributeTabFragment fragment = new AttributeTabFragment();
         final Bundle args = new Bundle();
-        // args.putString(ARG_ATTR_TYPE, toolType.name());
 
         // Set the tab passed into the List as an argument when creating the object:
-        args.putString(ARG_ATTR_TAB, attrTab.name());
-        args.putInt(ARG_TAB_POSITION_KEY, position);
+        args.putString(ARG_ATTR_NAME, attrTab.name());
+        args.putInt(ARG_TAB_POSITION, position);
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -226,10 +225,10 @@ public class AttributeTabFragment<T> extends Fragment
             throw new IllegalStateException("No arguments set; use newInstance when constructing!");
         }
 
-        mAttrName = args.getString(ARG_ATTR_TAB);
+        mAttrName = args.getString(ARG_ATTR_NAME);
 
         // Get the Tab we are currently on:
-        mAttrTab = AttributeTabPagerAdapter.AttributeTab.valueOf(args.getString(ARG_ATTR_TAB));
+        mAttrTab = AttributeTabPagerAdapter.AttributeTab.valueOf(args.getString(ARG_ATTR_NAME));
 
         // Create the AttributeLists Controller
         // mAttributeListsControl = new AttributeListController(this.getActivity());
@@ -268,8 +267,8 @@ public class AttributeTabFragment<T> extends Fragment
 
                 try
                 {
-                    // Create a new Instance of the Class
-                    attributeListObject = m.invoke(t, this.getActivity());
+                    // Create a new Instance of the Class: AttributeList
+                    attributeListObject = m.invoke(t, this.getActivity(), mAttrName);
 
                     // c.toString() AttrSubList = (c.toString()) o;
 
@@ -296,7 +295,8 @@ public class AttributeTabFragment<T> extends Fragment
         catch (java.lang.InstantiationException e)
         {
             e.printStackTrace();
-        } catch (IllegalAccessException e)
+        }
+        catch (IllegalAccessException e)
         {
             e.printStackTrace();
         }
@@ -329,14 +329,14 @@ public class AttributeTabFragment<T> extends Fragment
         */
 
         // Class c = mAttributeList.getClass();
-        // T attributeList = null;
+        Object attributeList = null;
         List<? extends Attribute> attributes = null;
 
         // Get reference to our AttributeList using the AttributeListController:
         switch (mAttrName)
         {
             case "SKILLS":
-                mAttributeList = (SkillList) attributeListObject;
+                attributeList = (SkillList) attributeListObject;
                 attributes =  new ArrayList<Skill>();
 
             case "ATTRIBUTE":
@@ -347,14 +347,16 @@ public class AttributeTabFragment<T> extends Fragment
         // Get a reference to the active Skill List available:
         try {
 
-            Method m = mAttributeList.getClass().getMethod("selectFormattedRecords");
+            Method m = attributeList.getClass().getMethod("selectFormattedRecords");
 
             try {
-                attributes = (ArrayList<Skill>) m.invoke(mAttributeList);
-            } catch (IllegalAccessException e) {
+                attributes = (ArrayList<Skill>) m.invoke(attributeList);
+            }
+            catch (IllegalAccessException e) {
                 System.err.println("The method specified does not exist.");
                 System.exit(0);
-            } catch (InvocationTargetException e) {
+            }
+            catch (InvocationTargetException e) {
                 System.err.println("The method specified does not exist.");
                 System.exit(0);
             }
@@ -381,10 +383,8 @@ public class AttributeTabFragment<T> extends Fragment
 
                 // Connect the RecyclerView to the Adapter
                 mAttributeRecyclerView.setAdapter(mAdapter);
-
             }
             else {
-
                 // Give the Adapter the latest skills List
                 mAdapter.setAttributes(attributes);
 
@@ -397,7 +397,6 @@ public class AttributeTabFragment<T> extends Fragment
 
                 }
                 else {
-
                     // Log.d("Data Item Changed:", "About to reload Adapter holder item that was edited.", new Exception());
                     // Log.d("Prior Count:", "About to reload Adapter holder item that was edited.", new Exception());
 
@@ -550,7 +549,14 @@ public class AttributeTabFragment<T> extends Fragment
         {
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
 
-            switch (viewType)
+            // Create a simple TextView using the android library when no skills present:
+            View skillView = layoutInflater.inflate(R.layout.list_item_skill, parent, false);
+
+            // Create a new SkillHolder to hold the TextView
+            return new SkillHolder(skillView);
+
+            /*
+            switch (viewType) //  Displays the position (index) of the item to be added to the recyclerView
             {
                 case 0:
                     // Create a simple TextView using the android library when no skills present:
@@ -567,6 +573,7 @@ public class AttributeTabFragment<T> extends Fragment
                     // Create a new SkillHolder to hold the TextView
                     return new SkillHolder(noAttributeView);
             }
+            */
 
         }
 
@@ -574,19 +581,22 @@ public class AttributeTabFragment<T> extends Fragment
         //  Bind a skill to a holder
         public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int index)
         {
+            /*
             switch (viewHolder.getItemViewType())
             {
                 case 0:
+            */
 
-                    Skill skill = (Skill) mAttributes.get(index);
+            Skill skill = (Skill) mAttributes.get(index);
 
-                    SkillHolder skillHolder = (SkillHolder) viewHolder;
+            SkillHolder skillHolder = (SkillHolder) viewHolder;
 
-                    // Place the text in the TextView held by the holder to the skill object's Title
-                    // skillHolder.mLowerCIBoundTextView.setText(R.string.no_skills);
+            // Place the text in the TextView held by the holder to the skill object's Title
+            // skillHolder.mLowerCIBoundTextView.setText(R.string.no_skills);
 
-                    skillHolder.bindAttribute(skill);
+            skillHolder.bindAttribute(skill);
 
+            /*
                     break;
 
                 default:
@@ -594,6 +604,7 @@ public class AttributeTabFragment<T> extends Fragment
                     break;
 
             }
+            */
         }
 
         @Override
@@ -628,7 +639,7 @@ public class AttributeTabFragment<T> extends Fragment
     protected abstract class AttributeHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
         // Attribute Fields to display in Listing:
-        private TextView mElementNameTextView;
+        protected TextView mElementNameTextView;
         // private TextView mDateAddedTextView;
         // private CheckBox mExperienceCheckBox;
 
@@ -664,22 +675,10 @@ public class AttributeTabFragment<T> extends Fragment
 
         // Get a skill and bind its fields to the RecyclerView.Holder
         // initially when the holder is first created
-        public <T> void bindAttribute(T attr)
-        {
-            String outText = null;
-
-            outText = callMethod("getElementName", attr, String.class);
-
-            mElementNameTextView.setText(outText);
-
-            outText = callMethod("getElementName", attr, String.class);
-
-            // mDateAddedTextView.setText(mSkill.getAddedDate().toString());
-            // mExperienceCheckBox.setChecked(mSkill.isExperienced());
-        }
+        abstract public <T> void bindAttribute(T attr);
 
         @Override
-        public abstract void onClick(View v);
+        abstract public void onClick(View v);
     }
 
     // Add a NoAttributeHolder when no Attributes are present:
@@ -692,7 +691,7 @@ public class AttributeTabFragment<T> extends Fragment
             super(itemView);
 
             // Create a TextView to Skill specific fields:
-            super.mElementNameTextView = (TextView) itemView.findViewById(R.id.no_skills_text_view);
+            // this.mElementNameTextView = (TextView) itemView.findViewById(R.id.no_skills_text_view);
         }
 
         public <T> void bindAttribute(T attr)
@@ -701,12 +700,10 @@ public class AttributeTabFragment<T> extends Fragment
 
             String outText = null;
 
-            // Invoke the Attribute's method to get values to be displayed:
+            // Invoke the Attributes method to get values to be displayed:
             outText = mSkill.getElementName();
 
-            super.mElementNameTextView  = (TextView) itemView.findViewById(R.id.list_item_skill_title_text_view);
-
-            super.mElementNameTextView.setText(outText);
+            mElementNameTextView.setText(outText);
         }
 
         @Override

@@ -2,13 +2,7 @@ package com.appsforprogress.android.mycareerpath;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.view.View;
 
 import java.util.UUID;
 
@@ -37,6 +31,6 @@ public class SkillActivity extends SingleFragmentActivity
         UUID skillId = (UUID) getIntent().getSerializableExtra(SkillActivity.EXTRA_SKILL_ID);
 
         // Create a new instance of a SkillFragment
-        return SkillFragment.newInstance(skillId);
+        return SkillScrollerFragment.newInstance(skillId);
     }
 }

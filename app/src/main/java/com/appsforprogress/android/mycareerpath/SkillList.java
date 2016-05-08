@@ -28,7 +28,7 @@ import com.appsforprogress.android.mycareerpath.database.SkillDBSchema.SkillTabl
  * Created by Oswald on 1/10/2016.
  */
 
-public class SkillList extends AttributeList
+public class SkillList extends AttributeList_OLD
 {
     // Holds static singleton to list the various skills within
     private static SkillList sSkillList;

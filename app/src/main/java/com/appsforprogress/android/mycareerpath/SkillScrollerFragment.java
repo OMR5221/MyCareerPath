@@ -8,11 +8,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.ShareCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,9 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.text.format.DateFormat;
+
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -35,7 +31,7 @@ import static android.support.v4.app.ShareCompat.*;
  */
 
 // Make a subclass of the Fragment class
-public class SkillFragment extends Fragment
+public class SkillScrollerFragment extends Fragment
 {
     // Create an instance of the Skill class for the fragment to manage
     private Skill mSkill;
@@ -77,14 +73,14 @@ public class SkillFragment extends Fragment
 
     // Return a SkillFragment Instance containing the skill input
     // to the calling Activity
-    public static SkillFragment newInstance(UUID skillId)
+    public static SkillScrollerFragment newInstance(UUID skillId)
     {
         // Set up Bundle (HASH) with skill to populate skillFragment with
         Bundle args = new Bundle();
         args.putSerializable(ARG_SKILL_ID, skillId);
 
         // Call Constructor directly
-        SkillFragment fragment = new SkillFragment();
+        SkillScrollerFragment fragment = new SkillScrollerFragment();
         fragment.setArguments(args);
 
         return fragment;

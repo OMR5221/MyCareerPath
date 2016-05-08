@@ -179,8 +179,7 @@ public class SkillListFragment extends Fragment
             mSkillRecyclerView.setVisibility(View.GONE);
             mNoSkillTextView.setVisibility(View.VISIBLE);
         }
-        else
-        {
+        else {
 
             // Set up the adapter if it is not already in place:
             if (mAdapter == null)
@@ -193,8 +192,7 @@ public class SkillListFragment extends Fragment
                 mSkillRecyclerView.setAdapter(mAdapter);
 
             }
-            else
-            {
+            else {
 
                 // Give the Adapter the latest skills List
                 mAdapter.setSkills(skills);
@@ -207,8 +205,7 @@ public class SkillListFragment extends Fragment
                     mAdapter.notifyDataSetChanged();
 
                 }
-                else
-                {
+                else {
 
                     // Log.d("Data Item Changed:", "About to reload Adapter holder item that was edited.", new Exception());
                     // Log.d("Prior Count:", "About to reload Adapter holder item that was edited.", new Exception());
@@ -223,8 +220,7 @@ public class SkillListFragment extends Fragment
                         mAdapter.notifyItemRangeChanged(mPosition, mItemCount);
                     }
                     // We have edited an item from the SkillList
-                    else
-                    {
+                    else {
                         // Tell the adapter to reload only the item that was edited in the detail View
                         mAdapter.notifyItemChanged(mPosition);
                     }
@@ -234,7 +230,6 @@ public class SkillListFragment extends Fragment
             mSkillRecyclerView.setVisibility(View.VISIBLE);
             mNoSkillTextView.setVisibility(View.GONE);
         }
-
 
         // Update the skill count one refresh of the SkillList UI
         updateCount();

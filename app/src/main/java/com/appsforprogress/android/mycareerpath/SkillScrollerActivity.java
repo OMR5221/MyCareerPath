@@ -3,9 +3,7 @@ package com.appsforprogress.android.mycareerpath;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -31,7 +29,7 @@ public class SkillScrollerActivity extends AppCompatActivity
     // Communicate with the SkillListActivity about the position of the Skill deleted
     public static Intent newIntent(Context packageContext, UUID skillId)
     {
-        // Intent(HASH)
+        // Intent(HASH):
         Intent intent = new Intent(packageContext, SkillScrollerActivity.class);
 
         // Insert an extra key, value pair into the hash
@@ -60,7 +58,7 @@ public class SkillScrollerActivity extends AppCompatActivity
         // Get the fragmentManager for this Activity:
         FragmentManager fragmentManager = getSupportFragmentManager();
 
-        // Have the viewPager Adapter manage the Fragment for this Activity
+        // Have the viewPager Adapter manage the Fragment for this Activity:
         mViewPager.setAdapter
         (
             new FragmentStatePagerAdapter(fragmentManager)
@@ -72,7 +70,7 @@ public class SkillScrollerActivity extends AppCompatActivity
                     Skill skill = mSkills.get(position);
 
                     // Send this skill to be retrieved in the SkillFragment
-                    return SkillFragment.newInstance(skill.getId());
+                    return SkillScrollerFragment.newInstance(skill.getId());
                 }
 
                 @Override
