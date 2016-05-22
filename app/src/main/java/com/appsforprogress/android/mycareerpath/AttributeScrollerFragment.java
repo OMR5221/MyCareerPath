@@ -116,6 +116,7 @@ public class AttributeScrollerFragment extends Fragment
 
         // Get a reference to the active Skill:
         mAttribute = new Object();
+
         String className = fPackageName + "Skill" + "List";
 
         Object attributeListObject = new Object();
@@ -371,7 +372,7 @@ public class AttributeScrollerFragment extends Fragment
         // Set up the EditText widget from fragment_skill.xml
         mTitleField = (EditText) v.findViewById(R.id.skill_title);
 
-        String elementName = "";
+        String elementName = null;
 
         String attrClassName = fPackageName + "Skill";
 
@@ -380,7 +381,7 @@ public class AttributeScrollerFragment extends Fragment
             // Get the Class Object:
             Class<?> c = Class.forName(attrClassName);
 
-            Method[] allMethods = c.getDeclaredMethods();
+            Method[] allMethods = c.getMethods();
 
             for (Method m : allMethods)
             {
@@ -440,11 +441,68 @@ public class AttributeScrollerFragment extends Fragment
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count){}
-            /*{
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
                 // On Text Edit set the title of our Skill Instance to the users input
-                mAttribute.setElementName(s.toString());
-            }*/
+                // mAttribute.setElementName(s.toString());
+
+                String attrClassName = fPackageName + "Skill";
+
+                try {
+
+                    // Get the Class Object:
+                    Class<?> c = Class.forName(attrClassName);
+
+                    Method[] allMethods = c.getDeclaredMethods();
+
+                    for (Method m : allMethods)
+                    {
+                        String mName = m.getName();
+
+                        if (!mName.equals("setElementName")) //)|| (m.getGenericReturnType() != boolean.class))
+                        {
+                            continue;
+                        }
+
+                /*
+                Type[] pType = m.getGenericParameterTypes();
+
+                if ((pType.length != 1) || Locale.class.isAssignableFrom(pType[0].getClass()))
+                {
+                    continue;
+                }
+                */
+
+                        m.setAccessible(true);
+
+                        try
+                        {
+                            // Create a new Instance of the Class
+                            m.invoke(mAttribute, s.toString());
+
+                            // c.toString() AttrSubList = (c.toString()) o;
+
+                            // Add created Objects to the Hash (Key: Attribute Name, Value: AttributeList Subclass Object)
+                            //mAttributeLists.put(attr, o);
+                        }
+                        catch (IllegalAccessException ia)
+                        {
+                            System.err.println("No access to create an instance of this Class.");
+                            System.exit(0);
+                        }
+                        catch (InvocationTargetException iv)
+                        {
+                            System.err.println("AttributeList: Issue invoking instance of Object.");
+                            System.exit(0);
+                        }
+                    }
+                }
+                catch (ClassNotFoundException e)
+                {
+                    System.err.println("No applicable Class found.");
+                    System.exit(0);
+                }
+            }
 
             @Override
             public void afterTextChanged(Editable s) {}
