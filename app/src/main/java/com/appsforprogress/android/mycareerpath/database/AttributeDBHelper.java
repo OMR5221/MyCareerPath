@@ -28,7 +28,7 @@ import java.util.UUID;
 /**
  * Created by Oswald on 2/19/2016.
  */
-public class AttributeDBHelper<A extends Attribute,T extends AttributeDBSchema> extends SQLiteOpenHelper
+public class AttributeDBHelper extends SQLiteOpenHelper
 {
 
     private static final Integer VERSION = 1;
@@ -38,6 +38,7 @@ public class AttributeDBHelper<A extends Attribute,T extends AttributeDBSchema> 
     private static String TAG = "DataBaseHelper";
     private static String mColumns;
     private final Context mContext;
+    private static SQLiteDatabase sAttributeDB;
 
     public AttributeDBHelper(Context context)
     {
@@ -45,6 +46,14 @@ public class AttributeDBHelper<A extends Attribute,T extends AttributeDBSchema> 
 
         this.mContext = context;
     }
+
+
+    // get the SkillList object in use
+    public static SQLiteDatabase get()
+    {
+        return sAttributeDB;
+    }
+
 
     @Override
     public String getDatabaseName()
@@ -482,6 +491,9 @@ public class AttributeDBHelper<A extends Attribute,T extends AttributeDBSchema> 
 
 
                 }
+
+                sAttributeDB = db;
+
 
                 /*
                 List<Skill> skills = this.selectFormattedRecords();

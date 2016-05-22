@@ -59,6 +59,10 @@ public class SkillList extends AttributeList_OLD
     {
         mContext = context.getApplicationContext();
 
+        // Just need a reference to the DB Table
+        mAttributesDatabase = AttributeDBHelper.get();
+
+        /*
         mAttributesDatabase = new AttributeDBHelper(mContext).getWritableDatabase();
 
         String mSkillsFileName = "Skills.csv";
@@ -66,7 +70,6 @@ public class SkillList extends AttributeList_OLD
 
         // Get Dirs for files:
         File fileDir = context.getFilesDir();
-        /*
         String strNewFileName = "Skills.csv";
         String strFileContents = "Write to the Skills file.";
 
@@ -142,13 +145,13 @@ public class SkillList extends AttributeList_OLD
         }
 
         BufferedReader bufferReader = new BufferedReader(new InputStreamReader(inStream));
-        */
+
         Integer lineNum = 0;
         Integer numColumns = 0;
         String dbColHeaders[] = null;
         String row[] = null;
 
-        /*
+
         String dbCol = "";
         String dbCol0 = "";
         String dbCol1 = "";
@@ -165,7 +168,6 @@ public class SkillList extends AttributeList_OLD
         String dbCol12 = "";
         String dbCol13 = "";
         String dbCol14 = "";
-        */
 
         InputStream inStream = null;
 
@@ -220,7 +222,6 @@ public class SkillList extends AttributeList_OLD
                     dbCol12 = columns[12].trim();
                     dbCol13 = columns[13].trim();
                     dbCol14 = columns[14].trim();
-                    */
                 }
                 else
                 {
@@ -242,7 +243,6 @@ public class SkillList extends AttributeList_OLD
                         Log.d("CSVParser" , "Skipping Bad CSV Row");
                         continue;
                     }
-                    */
 
                     for (int j = 0; j < numColumns; j++)
                     {
@@ -267,7 +267,6 @@ public class SkillList extends AttributeList_OLD
             mAttributesDatabase.setTransactionSuccessful();
             mAttributesDatabase.endTransaction();
 
-            /*
             List<Skill> skills = this.selectFormattedRecords();
 
             Integer skillCount = skills.size();
@@ -276,7 +275,7 @@ public class SkillList extends AttributeList_OLD
             {
                 System.out.println(skills.get(i));
             }
-            */
+
         }
         catch (IOException e)
         {
@@ -299,7 +298,6 @@ public class SkillList extends AttributeList_OLD
             }
         }
 
-        /*
         try
         {
             while ((line = buffer.readLine()) != null)
@@ -383,15 +381,15 @@ public class SkillList extends AttributeList_OLD
     public SkillCursorWrapper selectRawRecords(String whereClause, String[] whereArgs)
     {
         Cursor cursor = mAttributesDatabase.query
-                (
-                        SkillTable.TABLE_NAME,
-                        null, // All columns
-                        whereClause,
-                        whereArgs,
-                        null,  // group by
-                        null, // having
-                        null // limit
-                );
+        (
+            SkillTable.TABLE_NAME,
+            null, // All columns
+            whereClause,
+            whereArgs,
+            null,  // group by
+            null, // having
+            null // limit
+        );
 
         return new SkillCursorWrapper(cursor);
     }
@@ -472,7 +470,7 @@ public class SkillList extends AttributeList_OLD
 
 
         // Use custom cursor to retrieve row by UUID
-        SkillCursorWrapper cursor = this.selectRawRecords(SkillTable.Cols.UUID + " = ?", new String[]{id.toString()});
+        SkillCursorWrapper cursor = selectRawRecords(SkillTable.Cols.UUID + " = ?", new String[]{id.toString()});
 
         try
         {

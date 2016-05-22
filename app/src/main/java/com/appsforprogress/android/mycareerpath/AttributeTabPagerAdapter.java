@@ -17,11 +17,12 @@ public class AttributeTabPagerAdapter extends FragmentPagerAdapter
 {
     public enum AttributeTab
     {
-        SKILLS(R.string.attributes_skill),
-        KNOWLEDGE(R.string.attributes_knowledge),
-        ABILITIES(R.string.attributes_abilities),
-        EDUCATION_TRAINING_EXPERIENCE(R.string.attributes_edctrnexp),
-        INTERESTS(R.string.attributes_interests);
+        SKILLS(R.string.attributes_skill)
+        //,KNOWLEDGE(R.string.attributes_knowledge),
+        //ABILITIES(R.string.attributes_abilities),
+        //EDUCATION_TRAINING_EXPERIENCE(R.string.attributes_edctrnexp),
+        //INTERESTS(R.string.attributes_interests)
+        ;
 
         // Tells us the tab selected
         private final int mStringResource;

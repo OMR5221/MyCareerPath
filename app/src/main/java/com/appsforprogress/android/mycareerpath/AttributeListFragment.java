@@ -25,10 +25,8 @@ public class AttributeListFragment<T extends Attribute> extends ListFragment imp
 
     public static AttributeListFragment newInstance(AttributeTabPagerAdapter.AttributeTab attrTab)
     {
-        String attrType = attrTab.name();
-        final AttributeListFragment fragment = new AttributeListFragment(attrType);
+        final AttributeListFragment fragment = new AttributeListFragment();
         final Bundle args = new Bundle();
-        // args.putString(ARG_ATTR_TYPE, toolType.name());
 
         // Set the tab passed into the List as an argument when creating the object:
         args.putString(ARG_ATTR_TAB, attrTab.name());
@@ -36,10 +34,9 @@ public class AttributeListFragment<T extends Attribute> extends ListFragment imp
         return fragment;
     }
 
-    public AttributeListFragment(String attrType)
+    public AttributeListFragment()
     {
         // Requires an empty public constructor
-        mAttrType = attrType;
     }
 
     @Override

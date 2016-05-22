@@ -54,10 +54,10 @@ public class SkillCursorWrapper extends CursorWrapper
         Integer proficiency = getInt(getColumnIndex(SkillTable.Cols.PROFICIENCY));
 
         // Create a new Skill and assign values retrieved from the Database for display in SkillFragment
-        Skill skill = new Skill();
+        Skill skill = new Skill(UUID.fromString(uuidString));
 
         skill.setONetCode(oNetCode);
-        skill.setONetCode(careerName);
+        skill.setCareerName(careerName);
         skill.setElementId(elementId);
         skill.setElementName(elementName);
         skill.setScaleId(scaleId);

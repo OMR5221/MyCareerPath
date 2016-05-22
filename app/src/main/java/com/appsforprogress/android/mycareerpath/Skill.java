@@ -33,6 +33,11 @@ public class Skill extends Attribute
         super();
     }
 
+    public Skill(UUID uuid)
+    {
+        super(uuid);
+    }
+
     // Getter and setters:
     public String getN()
     {

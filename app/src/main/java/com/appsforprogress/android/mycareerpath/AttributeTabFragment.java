@@ -234,7 +234,7 @@ public class AttributeTabFragment<T> extends Fragment
         // mAttributeListsControl = new AttributeListController(this.getActivity());
 
         String className = fPackageName + "SkillList";
-        Object attributeListObject = null;
+        Object attributeListObject = new Object();
 
         try {
 
@@ -268,7 +268,7 @@ public class AttributeTabFragment<T> extends Fragment
                 try
                 {
                     // Create a new Instance of the Class: AttributeList
-                    attributeListObject = m.invoke(t, this.getActivity(), mAttrName);
+                    attributeListObject = m.invoke(t, this.getActivity());
 
                     // c.toString() AttrSubList = (c.toString()) o;
 
@@ -322,21 +322,18 @@ public class AttributeTabFragment<T> extends Fragment
         }
         catch (NoSuchMethodException e)
         {
-
-
-
         }
         */
 
         // Class c = mAttributeList.getClass();
         Object attributeList = null;
-        List<? extends Attribute> attributes = null;
+        List<? extends Attribute> attributes = new ArrayList<>();
 
         // Get reference to our AttributeList using the AttributeListController:
         switch (mAttrName)
         {
             case "SKILLS":
-                attributeList = (SkillList) attributeListObject;
+                // attributeList = (SkillList) attributeListObject;
                 attributes =  new ArrayList<Skill>();
 
             case "ATTRIBUTE":
@@ -347,10 +344,10 @@ public class AttributeTabFragment<T> extends Fragment
         // Get a reference to the active Skill List available:
         try {
 
-            Method m = attributeList.getClass().getMethod("selectFormattedRecords");
+            Method m = attributeListObject.getClass().getMethod("selectFormattedRecords");
 
             try {
-                attributes = (ArrayList<Skill>) m.invoke(attributeList);
+                attributes = (ArrayList<Skill>) m.invoke(attributeListObject);
             }
             catch (IllegalAccessException e) {
                 System.err.println("The method specified does not exist.");
@@ -717,7 +714,7 @@ public class AttributeTabFragment<T> extends Fragment
 
             // Create an Intent to start the Skill Scroller Activity's intent
             // to update the SkillFragment
-            Intent intent = SkillScrollerActivity.newIntent(getActivity(), mSkill.getId());
+            Intent intent = AttributeScrollerActivity.newIntent(getActivity(), mSkill.getId(), mAttrName);
 
             // Get the position index of the Skill List item selected:
             // INCORRECT: ITEM SELECTED NOT ALWAYS THE ITEM RETURNED
