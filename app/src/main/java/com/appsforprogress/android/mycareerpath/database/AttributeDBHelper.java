@@ -133,6 +133,7 @@ public class AttributeDBHelper extends SQLiteOpenHelper
     // Create the tables in my Attributes Table:
     public void onCreate(SQLiteDatabase db)
     {
+        // db.delete(null, null, null);
 
         /*
         try

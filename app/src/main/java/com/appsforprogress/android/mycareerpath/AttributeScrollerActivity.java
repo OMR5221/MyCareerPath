@@ -446,7 +446,7 @@ public class AttributeScrollerActivity<T> extends AppCompatActivity
         for (int i = 0; i < mAttributes.size(); i++)
         {
             // Get the skill, then its id and check if match
-            if (mAttributes.get(i).getId().equals(mAttrId))
+            if (mAttributes.get(i).getId().equals(attrId))
             {
                 mViewPager.setCurrentItem(i);
 
