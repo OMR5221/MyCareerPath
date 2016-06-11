@@ -10,15 +10,30 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.UUID;
+
 /**
  * Created by Oswald on 3/5/2016.
  */
 public class UserProfileFragment extends Fragment
 {
+    private static final String ARG_USER_ID = "user_id";
+
     private User mUser;
     private EditText mFirstNameEdit;
     private EditText mLastNameEdit;
 
+
+    public static UserProfileFragment newInstance() //UUID userId)
+    {
+        Bundle args = new Bundle();
+        // args.putSerializable(ARG_USER_ID, userId);
+
+        UserProfileFragment fragment = new UserProfileFragment();
+        fragment.setArguments(args);
+
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -27,7 +42,6 @@ public class UserProfileFragment extends Fragment
 
         mUser = new User();
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)

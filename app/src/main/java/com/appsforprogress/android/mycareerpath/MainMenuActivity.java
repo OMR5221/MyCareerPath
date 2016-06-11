@@ -1,10 +1,15 @@
 package com.appsforprogress.android.mycareerpath;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -67,30 +72,40 @@ public class MainMenuActivity extends AppCompatActivity implements NavigationVie
 
         mContext = getApplicationContext();
 
-        /*
         // Set up tabs and their titles
         if (savedInstanceState == null)
         {
             // Default to the UserProfile Activity:
             //new UserProfileFragment.newInstance();
-            setupAttrTabs();
-            // setupAttrTabs(0);
+            displayView(R.id.nav_menu_user);
         }
-        */
     }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem)
     {
+        displayView(menuItem.getItemId());
+        menuItem.setChecked(true);
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    public void displayView(int viewId)
+    {
+
+        Fragment fragment = null;
+        String title = getString(R.string.app_name);
+
         // Set the position for the elements in the Main Menu:
-        switch (menuItem.getItemId())
+        switch (viewId)
         {
             case R.id.nav_menu_user:
                 mCurrentNavPosition = 0;
+                fragment = launchUserProfile();
                 break;
             case R.id.nav_menu_attributes:
                 mCurrentNavPosition = 1;
-                setupAttrTabs();
+                fragment = setupAttrTabs();
                 break;
             case R.id.nav_menu_explore:
                 mCurrentNavPosition = 2;
@@ -106,9 +121,18 @@ public class MainMenuActivity extends AppCompatActivity implements NavigationVie
                 break;
         }
 
-        menuItem.setChecked(true);
-        mDrawerLayout.closeDrawer(GravityCompat.START);
-        return true;
+        if (fragment != null)
+        {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.fragment_container, fragment);
+            ft.commit();
+        }
+
+        // set the toolbar title
+        if (getSupportActionBar() != null)
+        {
+            getSupportActionBar().setTitle(title);
+        }
     }
 
     // Used to restore the Bundle Hash
@@ -125,10 +149,7 @@ public class MainMenuActivity extends AppCompatActivity implements NavigationVie
 
         menuItem.setChecked(true);
 
-        if (menuItem.getItemId() == R.id.nav_menu_attributes)
-        {
-            setupAttrTabs();
-        }
+        displayView(menuItem.getItemId());
     }
 
     // Save key/value entries to Bundle upon Pause
@@ -140,48 +161,15 @@ public class MainMenuActivity extends AppCompatActivity implements NavigationVie
         outState.putInt(LAST_TAB_POSITION, mCurrentNavPosition);
     }
 
-    private void setupAttrTabs()
+    private Fragment launchUserProfile()
     {
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        // Intent intent = UserProfileActivity.newIntent(this);
+        // startActivity(intent);
+        return UserProfileFragment.newInstance();
+    }
 
-        final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-
-        // Want to create DB here:
-        // Create the db and its empty tables and load data into tables
-        mAttributesDatabase = new AttributeDBHelper(mContext).getWritableDatabase();
-
-        // Fill each DB table and create Attribute Lists per Type
-        final AttributeTabPagerAdapter attrPagerAdapter = new AttributeTabPagerAdapter(getSupportFragmentManager(), getResources()); // ,mMainMenuOptions[position]
-
-        tabLayout.removeAllTabs();
-
-        // Retrieve the tabs for the layout from the pagerAdapter
-        tabLayout.setTabsFromPagerAdapter(attrPagerAdapter);
-
-        // Have the viewpager listen for tab changes:
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-
-        viewPager.setAdapter(attrPagerAdapter);
-
-        // Define what to do at different times when a tab is selected:
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener()
-        {
-
-            @Override
-            public void onTabSelected(TabLayout.Tab tab)
-            {
-                viewPager.setCurrentItem(tab.getPosition());
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-            }
-        });
-
-
+    private Fragment setupAttrTabs()
+    {
+        return AttrTabsFragment.newInstance();
     }
 }
