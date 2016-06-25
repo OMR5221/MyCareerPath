@@ -20,8 +20,6 @@ import com.appsforprogress.android.mycareerpath.database.AttributeDBHelper;
  */
 public class AttrTabsFragment extends Fragment
 {
-    private SQLiteDatabase mAttributesDatabase;
-
 
     public static AttrTabsFragment newInstance() //UUID userId)
     {
@@ -38,7 +36,6 @@ public class AttrTabsFragment extends Fragment
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -52,10 +49,6 @@ public class AttrTabsFragment extends Fragment
         final TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tabs);
 
         Context context = this.getActivity().getApplicationContext();
-
-        // Want to create DB here:
-        // Create the db and its empty tables and load data into tables
-        mAttributesDatabase = new AttributeDBHelper(context).getWritableDatabase();
 
         // Fill each DB table and create Attribute Lists per Type
         final AttributeTabPagerAdapter attrPagerAdapter = new AttributeTabPagerAdapter(this.getActivity().getSupportFragmentManager(), getResources()); // ,mMainMenuOptions[position]

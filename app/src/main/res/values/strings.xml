@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">MyCareerPath</string>
+    <string name="search_title">Search</string>
+    <string name="search_hint">Enter search here</string>
     <string name="action_settings">Settings</string>
     <string name="skill_title_hint">Enter a name for your skill.</string>
     <string name="skill_title_label">Skill</string>
@@ -31,16 +33,16 @@
     <string name="user_menu_description">User Profile</string>
     <string name="attributes_menu_label">Attributes</string>
     <string name="attributes_menu_description">Define your attributes</string>
-        <string name="attributes_menu_skills_label">Skills</string>
-        <string name="attributes_menu_skills_description">Define your skills</string>
-        <string name="attributes_menu_abilities_label">Abilities</string>
-        <string name="attributes_menu_abilities_description">Define your abilities</string>
-        <string name="attributes_menu_knowledge_label">Knowledge</string>
-        <string name="attributes_menu_knowledge_description">Define your knowledge</string>
-        <string name="attributes_menu_edctrnexp_label">Education, Training, and Experience</string>
-        <string name="attributes_menu_edctrnexp_description">Define your hands on details</string>
-        <string name="attributes_menu_interests_label">Interests</string>
-        <string name="attributes_menu_interests_description">Define your interests</string>
+    <string name="attributes_menu_skills_label">Skills</string>
+    <string name="attributes_menu_skills_description">Define your skills</string>
+    <string name="attributes_menu_abilities_label">Abilities</string>
+    <string name="attributes_menu_abilities_description">Define your abilities</string>
+    <string name="attributes_menu_knowledge_label">Knowledge</string>
+    <string name="attributes_menu_knowledge_description">Define your knowledge</string>
+    <string name="attributes_menu_edctrnexp_label">Education, Training, and Experience</string>
+    <string name="attributes_menu_edctrnexp_description">Define your hands on details</string>
+    <string name="attributes_menu_interests_label">Interests</string>
+    <string name="attributes_menu_interests_description">Define your interests</string>
     <string name="explore_menu_label">Explore</string>
     <string name="explore_menu_description">Find Careers associated tou your skills.</string>
     <string name="connect_menu_label">Connect</string>
@@ -53,4 +55,6 @@
     <string name="attributes_edctrnexp">Education, Training, and Experience</string>
     <string name="attributes_interests">Interests</string>
     <string name="title_activity_attr_detail">AttributeDetailActivity</string>
+    <string name="facebook_app_id">487017184827673</string>
+    <string name="title_activity_login">LoginActivity</string>
 </resources>

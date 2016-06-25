@@ -13,6 +13,9 @@ public class User
     private String mFirstName;
     private String mLastName;
     private Date mBirthDate;
+    private String mName;
+    private String mEmail;
+    private String mFaceBookID;
     private Date mSignUpDate;
 
     // Define constructor for the Skill Model
@@ -51,6 +54,30 @@ public class User
 
     public void setLastName(String lastName) {
         mLastName = lastName;
+    }
+
+    public String getName() {
+        return mName;
+    }
+
+    public void setName(String name) {
+        mName = name;
+    }
+
+    public String getEmail() {
+        return mEmail;
+    }
+
+    public void setEmail(String email) {
+        mEmail = email;
+    }
+
+    public String getFaceBookID() {
+        return mFaceBookID;
+    }
+
+    public void setFaceBookID(String faceBookID) {
+        mFaceBookID = faceBookID;
     }
 
     public Date getSignUpDate()

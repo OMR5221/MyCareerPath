@@ -1,5 +1,6 @@
 package com.appsforprogress.android.mycareerpath;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,20 +15,35 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+
 import com.appsforprogress.android.mycareerpath.database.AttributeDBHelper;
+import com.facebook.Profile;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 
 /**
  * Created by Oswald on 3/12/2016.
  */
-public class MainMenuActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
+public class MainMenuActivity
+    extends AppCompatActivity
+    implements NavigationView.OnNavigationItemSelectedListener
 {
     private static final String TAG = "MainMenuActivity";
+    private static final String EXTRA_FIRST_NAME = "last_tab_position";
+    private static final String EXTRA_LAST_NAME = "last_tab_position";
+    private static final String EXTRA_IMAGE_LINK = "last_tab_position";
     private static final String LAST_TAB_POSITION = "last_tab_position";
 
     private int mCurrentNavPosition;
@@ -40,6 +56,21 @@ public class MainMenuActivity extends AppCompatActivity implements NavigationVie
     // For Database Usage:
     private Context mContext;
     private SQLiteDatabase mAttributesDatabase;
+
+    // For FaceBook Login:
+    CallbackManager mCallbackManager;
+
+    public static Intent launchProfile(Context packageContext, String firstName, String lastName, String profileImg)
+    {
+        Intent userProfile = new Intent(packageContext, MainMenuActivity.class);
+
+        userProfile.putExtra(LAST_TAB_POSITION, 0);
+        userProfile.putExtra(EXTRA_FIRST_NAME, firstName);
+        userProfile.putExtra(EXTRA_LAST_NAME, lastName);
+        userProfile.putExtra(EXTRA_IMAGE_LINK, profileImg);
+
+        return userProfile;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -72,6 +103,10 @@ public class MainMenuActivity extends AppCompatActivity implements NavigationVie
 
         mContext = getApplicationContext();
 
+        // Want to create DB here:
+        // Create the db and its empty tables and load data into tables
+        mAttributesDatabase = new AttributeDBHelper(mContext).getWritableDatabase();
+
         // Set up tabs and their titles
         if (savedInstanceState == null)
         {
@@ -80,6 +115,24 @@ public class MainMenuActivity extends AppCompatActivity implements NavigationVie
             displayView(R.id.nav_menu_user);
         }
     }
+
+    /*
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.options_menu, menu);
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
+
+        return true;
+    }
+    */
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem)
@@ -92,7 +145,6 @@ public class MainMenuActivity extends AppCompatActivity implements NavigationVie
 
     public void displayView(int viewId)
     {
-
         Fragment fragment = null;
         String title = getString(R.string.app_name);
 
@@ -172,4 +224,30 @@ public class MainMenuActivity extends AppCompatActivity implements NavigationVie
     {
         return AttrTabsFragment.newInstance();
     }
+
+    /*
+    public void onValidLogIn(Profile userProfile)
+    {
+        // User logged in: Call the fragment displaying their logged profile
+        // new UserProfileLogoutFragment.newInstance();
+
+        // Otherwise, we're in the one-pane layout and must swap frags...
+
+        // Create fragment and give it an argument for the selected article
+        UserProfileLogOutFragment logoutFragment = new UserProfileLogOutFragment();
+        Bundle args = new Bundle();
+        args.putInt(UserProfileLogOutFragment.ARG_PROFILE, userProfile);
+        logoutFragment.setArguments(args);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack so the user can navigate back
+        transaction.replace(R.id.fragment_container, logoutFragment);
+        transaction.addToBackStack(null);
+
+        // Commit the transaction
+        transaction.commit();
+    }
+    */
 }
