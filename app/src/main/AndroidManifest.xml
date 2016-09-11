@@ -43,7 +43,6 @@
             android:theme="@style/AppTheme.NoActionBar">
             -->
         </activity>
-
         <activity
             android:name=".AttributeDetailActivity"
             android:label="@string/title_activity_attr_detail"
@@ -70,7 +69,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
         </activity>
-
+        <activity
+            android:name=".LikeGalleryActivity"
+            android:label="@string/title_activity_like_gallery"
+            android:theme="@style/AppTheme">
+        </activity>
     </application>
 
 </manifest>

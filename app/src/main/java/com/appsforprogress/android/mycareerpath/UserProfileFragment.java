@@ -34,9 +34,11 @@ import com.facebook.login.widget.LoginButton;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -126,6 +128,9 @@ public class UserProfileFragment extends Fragment
                 });
 
                 postFab.setVisibility(View.VISIBLE);
+
+                // Check first 5 likes:
+
             }
         };
 
@@ -153,6 +158,7 @@ public class UserProfileFragment extends Fragment
             {
                 AccessToken accessToken = loginResult.getAccessToken();
                 Profile profile = Profile.getCurrentProfile();
+                getLikedPageInfo(loginResult);
                 Toast.makeText(getActivity().getApplicationContext(), "Logging in...", Toast.LENGTH_SHORT).show();
             }
 
@@ -176,7 +182,7 @@ public class UserProfileFragment extends Fragment
         loginButton = (LoginButton) view.findViewById(R.id.fb_login_button);
         // TODO: get some more permissions from the user
         loginButton.setReadPermissions(Arrays.asList(
-            "public_profile", "email", "user_birthday", "user_friends"));
+            "public_profile", "email", "user_birthday", "user_friends", "user_likes"));
         loginButton.setFragment(this);
         loginButton.registerCallback(mCallbackManager, mCallback);
     }
@@ -239,7 +245,8 @@ public class UserProfileFragment extends Fragment
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         super.onActivityResult(requestCode, resultCode, data);
-        if (mCallbackManager.onActivityResult(requestCode, resultCode, data)) {
+        if (mCallbackManager.onActivityResult(requestCode, resultCode, data))
+        {
             return;
         }
     }
@@ -267,5 +274,48 @@ public class UserProfileFragment extends Fragment
         super.onDestroy();
         accessTokenTracker.stopTracking();
         profileTracker.stopTracking();
+    }
+
+    /*
+ * To get the Facebook page which is liked by user's through creating a new request.
+ * When the request is completed, a callback is called to handle the success condition.
+ */
+    protected void getLikedPageInfo(LoginResult loginResult)
+    {
+
+        GraphRequest data_request = GraphRequest.newMeRequest(
+                loginResult.getAccessToken(),
+                new GraphRequest.GraphJSONObjectCallback()
+                {
+                    @Override
+                    public void onCompleted(JSONObject json_object, GraphResponse response)
+                    {
+                        try
+                        {
+                            // convert Json object into Json array
+                            JSONArray posts = json_object.getJSONObject("likes").optJSONArray("data");
+
+                            // LOOP through retrieved JSON posts:
+                            for (int i = 0; i < posts.length(); i++)
+                            {
+                                JSONObject post = posts.optJSONObject(i);
+                                String id = post.optString("id");
+                                String category = post.optString("category");
+                                String name = post.optString("name");
+                                int count = post.optInt("likes");
+                                // print id, page name and number of like of facebook page
+                                Log.e("id: ", id + " (name: " + name + " , category: "+ category + " likes count - " + count);
+                            }
+                        }
+                        catch(Exception e)
+                        {
+                        }
+                    }
+                });
+        Bundle permission_param = new Bundle();
+        // add the field to get the details of liked pages
+        permission_param.putString("fields", "likes{id,category,name,location,likes}");
+        data_request.setParameters(permission_param);
+        data_request.executeAsync();
     }
 }

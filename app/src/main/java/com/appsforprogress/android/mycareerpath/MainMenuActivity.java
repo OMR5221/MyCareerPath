@@ -159,8 +159,10 @@ public class MainMenuActivity
                 mCurrentNavPosition = 1;
                 fragment = setupAttrTabs();
                 break;
+            // Review the Users Likes for career pssobilities
             case R.id.nav_menu_explore:
                 mCurrentNavPosition = 2;
+                fragment = launchLikeGallery();
                 break;
             case R.id.nav_menu_learn:
                 mCurrentNavPosition = 3;
@@ -219,6 +221,13 @@ public class MainMenuActivity
         // startActivity(intent);
         return UserProfileFragment.newInstance();
     }
+
+
+    private Fragment launchLikeGallery()
+    {
+        return LikeGalleryFragment.newInstance();
+    }
+
 
     private Fragment setupAttrTabs()
     {
